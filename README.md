@@ -25,7 +25,7 @@ sudo apt-get install --no-install-recommends -y build-essential cmake pybind11-d
 Then, all the dependencies will be handled by the system. If you want to have dependencies installed on your machine, you can run the following command on Ubuntu:
 
 ```
-sudo  apt-get install libeigen3-dev libopencv-dev libtbb-dev libceres-dev 
+sudo apt-get install libeigen3-dev libopencv-dev libtbb-dev libceres-dev 
 ```
 
 For [tsl-robin map](https://github.com/Tessil/robin-map) and [Sophus](https://github.com/strasdat/Sophus), please refer to the relative github repos for installation from source.
@@ -60,6 +60,8 @@ This software gives you the possibility to perform three different tasks:
     ```
     st_mapping-deform_ref --help
     ```
+
+**IMPORTANT**: to use the generic dataloader (the one used by default) you need to have a "params.yaml" in the dataset folder that describes the camera parameters. Please, refer to our [example file](https://github.com/PRBonn/spatio-temporal-mapping/blob/main/examples/params.yaml) or write your own dataloader. This feature will be updated soon to be more user-friendly.
 
 
 ## Citations and LICENSE
