@@ -6,7 +6,7 @@
     <a href="https://github.com/PRBonn/spatio-temporal-mapping/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square" /></a>
 
 <p>
-  <img src="https://github.com/PRBonn/spatio-temporal-mapping/blob/main/images/first_image.png" width="500"/>
+  <img src="https://github.com/PRBonn/spatio-temporal-mapping/blob/main/images/first_image.png" width="400"/>
 </p>
 
 <p>
@@ -94,8 +94,6 @@ git checkout iros2024
 ```
 
 The purpose of this software goes beyond the research done with the papers, we aim to push this research direction even more. For this reason, we strongly suggest you to use the version on the main branch because it allows better results and higher performances. The iros2024 branch exists only to ensure results reproducibility.
-
-**Dataset**: In order to run the experiments and reproduce paper results you need access to the associated dataset. TODO: add also the information and the link to the dataset
 
 
 ## Acknowledgement
