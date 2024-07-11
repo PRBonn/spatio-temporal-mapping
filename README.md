@@ -6,7 +6,7 @@
     <a href="https://TODO"><img src="https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square" /></a>
 
 <p>
-  <img src="https://github.com/PRBonn/spatio-temporal-mapping/-/blob/develop/images/first_image.png" width="700"/>
+  <img src="https://github.com/PRBonn/spatio-temporal-mapping/-/blob/main/images/first_image.png" width="700"/>
 </p>
 
 <p>
