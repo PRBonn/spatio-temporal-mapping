@@ -10,8 +10,7 @@
 </p>
 
 <p>
-  <i>Spatio-Temporal Mapping is a RGB-D odometry and mapping system specifically thought for dynamic environments such as agriculture setting.
-The project contains the research published on these two papers: TODO</i>
+  <i>Spatio-Temporal Mapping is a RGB-D odometry and mapping system specifically thought for dynamic environments such as agriculture setting.</i>
 </p>
 
 </div>
@@ -37,7 +36,7 @@ For [tsl-robin map](https://github.com/Tessil/robin-map) and [Sophus](https://gi
 All you have to do is to clone this repo:
 
 ```
-git clone <TODO: name of github public repo here>
+git clone https://github.com/PRBonn/spatio-temporal-mapping
 ```
 
 and install it with:
@@ -53,18 +52,18 @@ This software gives you the possibility to perform three different tasks:
     ```
     st_mapping-mapping --help
     ```
-- Mapping aligned on a given map (generate a map from a sequence of RGBD images TODO: continue this description)
+- Mapping aligned on a given map (generate a map from a sequence of RGBD images aligned witha given reference map recorded previously on the same environment, even with drastic changes)
     ```
     st_mapping-mapping_onref --help
     ```
-- Deform a given map (TODO: write this description)
+- Deform a given map (deform a given map adapting it to changes visible through a new RGB-D sequence)
     ```
     st_mapping-deform_ref --help
     ```
 
 
 ## Citations and LICENSE
-This project is free software made available under the MIT License. For details see the [LICENSE](https://TODO) file.
+This project is free software made available under the MIT License. For details see the [LICENSE](https://github.com/PRBonn/spatio-temporal-mapping/blob/main/LICENSE) file.
 
 If you use this project, please refer to our [paper on data association](https://www.ipb.uni-bonn.de/wp-content/papercite-data/pdf/lobefaro2023iros.pdf) and [paper on plants deformation](https://www.ipb.uni-bonn.de/wp-content/papercite-data/pdf/lobefaro2024iros.pdf):
 
