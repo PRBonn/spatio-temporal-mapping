@@ -1,0 +1,30 @@
+mapping:
+  map_voxel_size: 0.001
+  registration_voxel_size: 0.01
+  local_map_size: 0.6
+  image_stride: 2 # 2 is the value used in the paper
+
+general:
+  first_frame: 0 # For now this paramater is not implemented inside the code
+  n_frames: -1 # -1 to use all frames in the given sequence
+  n_sensors: 1
+  depth_min_th: 0.4
+  depth_max_th: 1.0
+  icp_th: 0.5 # 0.01
+  frame_frequency: 5 
+  superpoint_weights: "weights/SuperPointNet.pt"
+
+slam:
+  ref_stable_features_min_th: 0.0
+  ref_stable_features_max_th: 1.2
+
+non_rigid_icp:
+  first_frame_nicp: 10
+  visual_match_frequency: 1
+  deformation_graph_connectivity: 6
+  deformation_graph_resolution: 0.05 # 0.025
+  matches_cloud_resolution: 0.01 # 0.08 -> 0.05
+  deformation_frame_frequency: 10
+
+baselines:
+  fpfh_voxel_size: 0.01
