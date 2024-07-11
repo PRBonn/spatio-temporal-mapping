@@ -1,9 +1,9 @@
 <div align="center">
   <h1>Spatio-Temporal Mapping</h1>
-  <a href="https://TODO"><img src="https://img.shields.io/badge/python-3670A0?style=flat-square&logo=python&logoColor=ffdd54" /></a>
-    <a href="https://TODO"><img src="https://img.shields.io/badge/Linux-FCC624?logo=linux&logoColor=black" /></a>
+    <a href="https://github.com/PRBonn/spatio-temporal-mapping#Installation"><img src="https://img.shields.io/badge/Linux-FCC624?logo=linux&logoColor=black" /></a>
+    <a href="https://github.com/PRBonn/spatio-temporal-mapping#Usage"><img src="https://img.shields.io/badge/python-3670A0?style=flat-square&logo=python&logoColor=ffdd54" /></a>
     <a href="https://www.ipb.uni-bonn.de/wp-content/papercite-data/pdf/lobefaro2024iros.pdf"><img src="https://img.shields.io/badge/Paper-pdf-<COLOR>.svg?style=flat-square" /></a>
-    <a href="https://TODO"><img src="https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square" /></a>
+    <a href="https://github.com/PRBonn/spatio-temporal-mapping/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square" /></a>
 
 <p>
   <img src="https://github.com/PRBonn/spatio-temporal-mapping/blob/main/images/first_image.png" width="500"/>
