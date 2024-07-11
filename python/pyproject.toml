@@ -1,0 +1,39 @@
+[build-system]
+requires = ["scikit-build-core", "pybind11"]
+build-backend = "scikit_build_core.build"
+
+[project]
+name = "st_mapping"
+version = "0.1.0"
+description = "Add a description of your python package."
+readme = "README.md"
+authors = [
+    { name = "Luca Lobefaro", email = "luca.lobefaro95@gmail.com" },
+]
+requires-python = ">=3.7"
+dependencies = [
+    "numpy",
+    "tqdm",
+    "pathlib",
+    "open3d>=0.13",
+    "typer[all]>=0.6.0",
+    "pyyaml>=5.4.1",
+    "pyquaternion",
+    "opencv-python>=4.9.0",
+    "torch>=2.3.0",#TODO: probably you can lower the version
+]
+
+[project.scripts]
+st_mapping-mapping = "st_mapping.scripts.mapping:run"
+st_mapping-mapping-onref = "st_mapping.scripts.mapping_onref:run"
+st_mapping-deform-ref = "st_mapping.scripts.deform_ref:run"
+
+[tool.scikit-build]
+build-dir = "build/{wheel_tag}"
+cmake.verbose = false
+cmake.minimum-version = "3.16"
+editable.mode = "redirect"
+editable.rebuild = true
+editable.verbose = true
+sdist.exclude = ["pybind/"]
+wheel.install-dir = "st_mapping/pybind/"
