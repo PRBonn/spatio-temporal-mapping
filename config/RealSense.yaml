@@ -4,7 +4,7 @@ dataset:
   depth_scale: 1000 
   image_stride: 4
   depth_min_th: 0.4
-  depth_max_th: 2.0
+  depth_max_th: 4.0
 
 mapping:
   max_points_per_voxel: 1

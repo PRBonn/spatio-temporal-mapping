@@ -155,11 +155,10 @@ std::vector<Eigen::Vector3d> Unproject2DPoints(const std::vector<Eigen::Vector2i
                                                const double min_th,
                                                const double max_th) {
     // Initialization
-    std::vector<Eigen::Vector3d> points3D;
+    std::vector<Eigen::Vector3d> points3D(points2D.size());
     const auto &K_inv = camera_intrinsics.inverse();
     const Sophus::SE3d T = pose * camera_extrinsics;
 
-    points3D.resize(points2D.size());
     std::transform(std::execution::par, points2D.cbegin(), points2D.cend(), points3D.begin(),
                    [&](const auto &pt2D) {
                        const double &depth = depth_img.at<double>(pt2D[1], pt2D[0]);
