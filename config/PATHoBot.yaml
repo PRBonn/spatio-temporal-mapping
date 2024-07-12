@@ -18,8 +18,8 @@ image_matcher:
   matching_distance_th: 0.5
   imgs_height: 220
   imgs_width: 260
-  #TODO: put this path somewhere else
-  superpoint_weights_path: "/home/luca/Downloads/weights/superpunto.pth" 
+  #TODO: fix this path in some way
+  superpoint_weights_path: "weights/superpunto.pth" 
   non_maximum_suppression: 8
   confidence_th: 0.015
   nn_th: 0.7
