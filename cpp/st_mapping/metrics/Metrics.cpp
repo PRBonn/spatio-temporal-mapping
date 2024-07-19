@@ -38,8 +38,8 @@
 
 // All this not so beatifull C++ functions are taken from kitti-dev-kit
 namespace {
-double lengths[] = {100, 200, 300, 400, 500, 600, 700, 800};
-int32_t num_lengths = 8;
+constexpr int32_t num_lengths = 4;
+constexpr std::array<double, num_lengths> lengths = {1, 5, 10, 20};
 
 struct errors {
     int32_t first_frame;
@@ -119,7 +119,6 @@ std::vector<errors> CalcSequenceErrors(const std::vector<Eigen::Matrix4d> &poses
             if (last_frame == -1) {
                 continue;
             }
-
             // compute rotational and translational errors
             Eigen::Matrix4d pose_delta_gt = poses_gt[first_frame].inverse() * poses_gt[last_frame];
             Eigen::Matrix4d pose_delta_result =
@@ -193,4 +192,5 @@ std::tuple<float, float> AbsoluteTrajectoryError(const std::vector<Eigen::Matrix
     ATE_trans /= static_cast<double>(num_poses);
     return std::make_tuple(std::sqrt(ATE_rot), std::sqrt(ATE_trans));
 }
+
 }  // namespace st_mapping::metrics

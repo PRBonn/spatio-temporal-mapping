@@ -100,8 +100,8 @@ class MappingPipeline:
             ate_rot, ate_tra = absolute_trajectory_error(
                 self._dataset.get_gt_poses(), self._poses
             )
-            print(f"\tAverage Translation Error:\t {avg_tra:6.3f}\t %")
-            print(f"\tAverage Rotational Error:\t {avg_rot:6.3f}\t deg/m")
+            print(f"\tRelative Translation Error(RPE): {avg_tra:6.3f}\t %")
+            print(f"\tRelative Rotational Error(RRE):\t {avg_rot:6.3f}\t deg/100m")
             print(f"\tAbsolute Trajectory Error:\t {ate_tra:6.3f}\t m")
             print(f"\tAbsolute Rotational Error:\t {ate_rot:6.3f}\t rad")
 

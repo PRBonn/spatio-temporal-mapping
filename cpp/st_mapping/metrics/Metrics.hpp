@@ -38,4 +38,5 @@ std::tuple<float, float> SequenceError(const std::vector<Eigen::Matrix4d> &poses
 
 std::tuple<float, float> AbsoluteTrajectoryError(const std::vector<Eigen::Matrix4d> &poses_gt,
                                                  const std::vector<Eigen::Matrix4d> &poses_result);
+
 }  // namespace st_mapping::metrics
