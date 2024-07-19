@@ -107,3 +107,5 @@ The code structure of this software follows the same of [KISS-ICP](https://githu
 frame downsample based on distance
 add example of config
 add the handling of different version of images (depth 8 or 16 bit)
+write a visualizer (try to avoid Open3D)
+IMPORTANT: probably the way in which you load the depth is wrong

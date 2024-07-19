@@ -60,9 +60,7 @@ class TumDataset:
 
         self._has_gt = self._check_dataset_consistency()
 
-        self._rgb_filenames, self._depth_filenames, self._n_images = (
-            self._load_img_filenames()
-        )
+        self._rgb_frames, self._depth_frames, self._matches = self._load_img_filenames()
         self._intrinsics, self._extrinsics, self._img_width, self._img_heigth = (
             load_camera_parameters(main_folder / "params.yaml")
         )
@@ -91,21 +89,15 @@ class TumDataset:
         return "groundtruth.txt" in subfiles
 
     def _load_img_filenames(self):
-        rgb_filenames = os.listdir(str(self._main_folder / "rgb"))
-        rgb_filenames.sort()
-        depth_filenames = os.listdir(str(self._main_folder / "depth"))
-        depth_filenames.sort()
-        n_images = len(rgb_filenames)
-        if len(depth_filenames) != n_images:
-            print("[ERROR] Number of rgb and depth images are not the same.")
-            sys.exit(1)
-        return rgb_filenames, depth_filenames, n_images
+        rgb_frames = np.loadtxt(fname=self._main_folder / "rgb.txt", dtype=str)
+        depth_frames = np.loadtxt(fname=self._main_folder / "depth.txt", dtype=str)
+        matches = self._get_matches(depth_frames[:, 0], rgb_frames[:, 0])
+        return rgb_frames, depth_frames, matches
 
     def _load_poses(self):
-
         if self._has_poses:
             poses = load_kitti_poses(self._main_folder / "poses.txt")
-            if len(poses) != self._n_images:
+            if len(poses) != len(self):
                 print("[ERROR] Number of poses and number of images do not match.")
                 sys.exit(1)
         else:
@@ -113,26 +105,16 @@ class TumDataset:
 
         if self._has_gt:
             gt_list = np.loadtxt(fname=self._main_folder / "groundtruth.txt", dtype=str)
-            depth_timestamps = [
-                name.split(".")[0] + "." + name.split(".")[1]
-                for name in self._depth_filenames
-            ]
-            indices = np.unique(
-                np.abs(
-                    (
-                        np.subtract.outer(
-                            gt_list[:, 0].astype(np.float64),
-                            np.array(depth_timestamps).astype(np.float64),
-                        )
-                    )
-                ).argmin(0)
+            gt_indices = self._get_matches(
+                gt_list[:, 0].astype(np.float64),
+                self._depth_frames[:, 0][self._matches[:, 0]].astype(np.float64),
             )
-            xyz = gt_list[indices][:, 1:4]
+            xyz = gt_list[gt_indices[:, 0]][:, 1:4]
 
             rotations = np.array(
                 [
                     Quaternion(x=x, y=y, z=z, w=w).rotation_matrix
-                    for x, y, z, w in gt_list[indices][:, 4:]
+                    for x, y, z, w in gt_list[gt_indices[:, 0]][:, 4:]
                 ]
             )
             num_poses = rotations.shape[0]
@@ -140,15 +122,30 @@ class TumDataset:
                 np.eye(4, dtype=np.float64).reshape(1, 4, 4).repeat(num_poses, axis=0)
             )
             gt_poses[:, :3, :3] = rotations
-            gt_poses[:, :3, 3] = xyz
+            gt_poses[:, :3, -1] = xyz
 
         else:
             gt_poses = np.array([])
 
         return poses, gt_poses
 
+    def _get_matches(self, src_timstamps, target_timstamps):
+        indices = np.abs(
+            (
+                np.subtract.outer(
+                    src_timstamps.astype(np.float64),
+                    target_timstamps.astype(np.float64),
+                )
+            )
+        )
+        src_matches = np.arange(len(src_timstamps))
+        target_matches = np.argmin(indices, axis=1)
+        _, unique_indxs = np.unique(target_matches, return_index=True)
+        matches = np.vstack((src_matches[unique_indxs], target_matches[unique_indxs])).T
+        return matches
+
     def __len__(self):
-        return self._n_images
+        return len(self._matches)
 
     def __getitem__(self, idx):
         return self.get_image(idx)
@@ -157,19 +154,20 @@ class TumDataset:
         return self._main_folder
 
     def get_image(self, idx):
-        if idx < 0 or idx > self._n_images:
+        if idx < 0 or idx > len(self):
             print(
-                f"[ERROR] {idx} is an invalid dataset index, dataset len: {self._n_images}."
+                f"[ERROR] {idx} is an invalid dataset index, dataset len: {len(self)}."
             )
-        rgb_img = cv2.imread(str(self._main_folder / "rgb" / self._rgb_filenames[idx]))
-        depth_img = (
-            cv2.imread(
-                str(self._main_folder / "depth" / self._depth_filenames[idx]),
-                cv2.IMREAD_ANYDEPTH,
-            ).astype("float64", copy=False)
-            / self._depth_scale
+        depth_idx, rgb_idx = self._matches[idx]
+        rgb = cv2.imread(
+            str(self._main_folder / self._rgb_frames[rgb_idx][-1]), cv2.IMREAD_COLOR
         )
-        return rgb_img, depth_img
+        depth_unprocessed = cv2.imread(
+            str(self._main_folder / self._depth_frames[depth_idx][-1]),
+            cv2.IMREAD_UNCHANGED,
+        )
+        depth = (depth_unprocessed / self._depth_scale).astype(np.float32)
+        return rgb, depth
 
     def img_width(self):
         return self._img_width

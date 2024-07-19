@@ -95,7 +95,7 @@ class MappingPipeline:
 
     def _run_evaluation(self):
         # Run estimation metrics evaluation, only when GT data was provided
-        if self._visual_odometry and self._dataset._has_gt:
+        if self._visual_odometry and self._dataset.has_gt():
             avg_tra, avg_rot = sequence_error(self._dataset.get_gt_poses(), self._poses)
             ate_rot, ate_tra = absolute_trajectory_error(
                 self._dataset.get_gt_poses(), self._poses
