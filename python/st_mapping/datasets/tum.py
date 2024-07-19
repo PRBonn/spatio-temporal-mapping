@@ -1,6 +1,12 @@
+# ----------------------------------------------------------------------------
+# NOTE: This file has been adapted from the Kiss-ICP project, but copyright
+# still belongs to Kiss-ICP. All rights reserved
+# ----------------------------------------------------------------------------
+# -              Kiss-ICP: https://github.com/PRBonn/kiss-icp                -
+# ----------------------------------------------------------------------------
 # MIT License
 #
-# Copyright (c) 2024 Luca Lobefaro, Meher V.R. Malladi, Tiziano Guadagnino, Cyrill Stachniss
+# # Copyright (c) 2023 Saurabh Gupta, Ignacio Vizzo, Cyrill Stachniss, University of Bonn
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
