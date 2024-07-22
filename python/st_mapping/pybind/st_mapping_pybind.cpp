@@ -19,7 +19,6 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
-#include <opencv2/core/hal/interface.h>
 #include <pybind11/eigen.h>
 #include <pybind11/numpy.h>
 #include <pybind11/pybind11.h>
@@ -27,7 +26,6 @@
 #include <pybind11/stl_bind.h>
 
 #include <Eigen/Core>
-#include <algorithm>
 #include <opencv2/core.hpp>
 #include <sophus/se3.hpp>
 
