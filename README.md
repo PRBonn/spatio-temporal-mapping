@@ -32,7 +32,7 @@ For [tsl-robin map](https://github.com/Tessil/robin-map) and [Sophus](https://gi
 
 **NOTE**: this software has been tested only on Ubuntu 22.04 machines, we do not ensure support for other platforms right now.
 
-**NOTE2**: if you decide to not use your system installed version of Ceres, then be ready to huge memory consumption during building. For this reason, if you don't have a big RAM, just install libceres-dev with your package manager.
+**NOTE 2**: if you decide to not use your system installed version of Ceres, then be ready to huge memory consumption during building. For this reason, if you don't have a big RAM, just install libceres-dev with the command above.
 
 ## Installation
 All you have to do is to clone this repo:
