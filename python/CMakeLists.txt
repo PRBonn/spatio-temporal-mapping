@@ -32,7 +32,7 @@ set(PYBIND11_NEWPYTHON ON)
 find_package(pybind11 CONFIG REQUIRED)
 
 # Import the cpp part
-add_subdirectory(${PROJECT_SOURCE_DIR}/../cpp/st_mapping ${CMAKE_CURRENT_BINARY_DIR}/st_mapping)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../cpp/st_mapping ${CMAKE_CURRENT_BINARY_DIR}/st_mapping)
 
 # Import the pybind code
 add_subdirectory(st_mapping/pybind)
