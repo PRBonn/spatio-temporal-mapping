@@ -32,7 +32,20 @@ set(PYBIND11_NEWPYTHON ON)
 find_package(pybind11 CONFIG REQUIRED)
 
 # Import the cpp part
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../cpp/st_mapping ${CMAKE_CURRENT_BINARY_DIR}/st_mapping)
+if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/../cpp/st_mapping/)
+  add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../cpp/st_mapping ${CMAKE_CURRENT_BINARY_DIR}/st_mapping)
+else()
+  # TODO: fix the TAG at some point
+  cmake_minimum_required(VERSION 3.18)
+  message(STATUS "Performing out-of-tree build, fetching ST-MAPPING v${CMAKE_PROJECT_VERSION} Release from Github")
+  include(FetchContent)
+  FetchContent_Declare(
+    ext_st_mapping_core PREFIX st_mapping_core
+    GIT_REPOSITORY https://github.com/PRBonn/spatio-temporal-mapping.git 
+    GIT_TAG origin/main
+    SOURCE_SUBDIR cpp/st_mapping)
+  FetchContent_MakeAvailable(ext_st_mapping_core)
+endif()
 
 # Import the pybind code
 add_subdirectory(st_mapping/pybind)
