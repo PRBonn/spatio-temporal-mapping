@@ -25,7 +25,6 @@
 #include <ceres/ceres.h>
 #include <ceres/cost_function.h>
 
-#include <execution>
 #include <iostream>
 #include <numeric>
 #include <set>
@@ -230,9 +229,10 @@ std::vector<Eigen::Vector3d> DeformationGraph::Deform(const int max_num_iteratio
     std::vector<Eigen::Vector3d> deformed_cloud(_cloud.size());
     std::vector<int> cloud_point_ids(_cloud.size());
     std::iota(cloud_point_ids.begin(), cloud_point_ids.end(), 0);
+    // TODO: can be parallelized (but check that it actually improves)
     std::transform(
-        std::execution::par, cloud_point_ids.cbegin(), cloud_point_ids.cend(),
-        deformed_cloud.begin(), [&](const int current_point_idx) {
+        cloud_point_ids.cbegin(), cloud_point_ids.cend(), deformed_cloud.begin(),
+        [&](const int current_point_idx) {
             // Get the node neighbors of the current point
             // TODO: if during the graph building we save which point in the cloud each node is then
             // we can avoid to search for neighbors

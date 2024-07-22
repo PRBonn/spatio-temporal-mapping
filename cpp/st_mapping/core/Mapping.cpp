@@ -27,7 +27,6 @@
 #include <tsl/robin_set.h>
 
 #include <Eigen/Dense>
-#include <execution>
 #include <iostream>
 #include <numeric>
 #include <opencv2/core.hpp>
@@ -158,17 +157,15 @@ std::vector<Eigen::Vector3d> Unproject2DPoints(const std::vector<Eigen::Vector2i
     const auto &K_inv = camera_intrinsics.inverse();
     const Sophus::SE3d T = pose * camera_extrinsics;
 
-    std::transform(std::execution::par, points2D.cbegin(), points2D.cend(), points3D.begin(),
-                   [&](const auto &pt2D) {
-                       const double &depth = depth_img.at<double>(pt2D[1], pt2D[0]);
-                       if (depth > 0.0 && depth > min_th && depth < max_th) {
-                           const Eigen::Vector3d uv(pt2D[0], pt2D[1], 1);
-                           return Eigen::Vector3d(T * (depth * K_inv * uv));
-                       } else {
-                           return Eigen::Vector3d(Eigen::Vector3d::Ones() *
-                                                  std::numeric_limits<double>::max());
-                       }
-                   });
+    std::transform(points2D.cbegin(), points2D.cend(), points3D.begin(), [&](const auto &pt2D) {
+        const double &depth = depth_img.at<double>(pt2D[1], pt2D[0]);
+        if (depth > 0.0 && depth > min_th && depth < max_th) {
+            const Eigen::Vector3d uv(pt2D[0], pt2D[1], 1);
+            return Eigen::Vector3d(T * (depth * K_inv * uv));
+        } else {
+            return Eigen::Vector3d(Eigen::Vector3d::Ones() * std::numeric_limits<double>::max());
+        }
+    });
 
     return points3D;
 }
