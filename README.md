@@ -102,10 +102,3 @@ The purpose of this software goes beyond the research done with the papers, we a
 
 ## Acknowledgement
 The code structure of this software follows the same of [KISS-ICP](https://github.com/PRBonn/kiss-icp) and some code is re-used from that repo. Please, if you use this software you should at least acknowledge also the work from KISS-ICP by giving a star on GitHub.
-
-## TODO
-frame downsample based on distance
-add example of config
-add the handling of different version of images (depth 8 or 16 bit)
-write a visualizer (try to avoid Open3D)
-IMPORTANT: probably the way in which you load the depth is wrong
