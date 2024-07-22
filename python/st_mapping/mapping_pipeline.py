@@ -19,19 +19,20 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-
 import numpy as np
 from st_mapping.config.config import StMappingConfig
-from st_mapping.tools import visualize_point_cloud, save_kitti_poses, save_point_cloud
+from st_mapping.tools import (
+    visualize_point_cloud,
+    save_kitti_poses,
+    save_point_cloud,
+    PrettyResults,
+)
 from st_mapping.odometry import DumpOdometry, Odometry
-
 from st_mapping.core.metrics import sequence_error, absolute_trajectory_error
 from st_mapping.core.mapping import extract_point_cloud
 from st_mapping.core.global_map import GlobalMap
 from tqdm.auto import trange
 import time
-
-from st_mapping.tools import PrettyResults
 
 
 class MappingPipeline:

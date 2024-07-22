@@ -96,7 +96,7 @@ def st_mapping_deform_ref(
         dataset=dataset,
         ref_dataset=ref_dataset,
         config=config,
-    ).run()
+    ).run().print()
 
 
 def run():

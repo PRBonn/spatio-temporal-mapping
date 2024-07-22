@@ -27,6 +27,7 @@ from st_mapping.tools import (
     visualize_aligned_point_clouds,
     save_kitti_poses,
     save_point_cloud,
+    PrettyResults,
 )
 from st_mapping.odometry import OdometryOnRef
 
@@ -56,6 +57,7 @@ class DeformRefPipeline:
         self._poses = []
         self._exec_times = []
         self._deformation_exec_time = 0.0
+        self._results = PrettyResults()
 
         self._n_frames = len(dataset)
         if self._config.n_frames > 1 and self._config.n_frames < self._n_frames:
@@ -82,7 +84,7 @@ class DeformRefPipeline:
         self._save_results()
         self._visualize_map()
         self._run_evaluation()
-        return
+        return self._results
 
     def _run_pipeline(self):
         for idx in trange(0, self._n_frames, unit="frames", dynamic_ncols=True):
@@ -201,10 +203,18 @@ class DeformRefPipeline:
             ate_rot, ate_tra = absolute_trajectory_error(
                 self._dataset.get_gt_poses(), self._poses
             )
-            print(f"\tAverage Translation Error:\t {avg_tra:6.3f}\t %")
-            print(f"\tAverage Rotational Error:\t {avg_rot:6.3f}\t deg/m")
-            print(f"\tAbsolute Trajectory Error:\t {ate_tra:6.3f}\t m")
-            print(f"\tAbsolute Rotational Error:\t {ate_rot:6.3f}\t rad")
+            self._results.append(
+                desc="Relative Translation Error(RPE)", units="%", value=avg_tra
+            )
+            self._results.append(
+                desc="Relative Rotational Error(RRE)", units="deg/100m", value=avg_rot
+            )
+            self._results.append(
+                desc="Absolute Trajectory Error (ATE)", units="m", value=ate_tra
+            )
+            self._results.append(
+                desc="Absolute Rotational Error (ARE)", units="rad", value=ate_rot
+            )
 
         # Run deformation evaluation, if we don't have errors in the deformation
         # and GT data is provided
@@ -218,10 +228,18 @@ class DeformRefPipeline:
             fitness_after, rmse_after = compute_registration_metrics(
                 deformed_points, gt_points, self._config.mapping.voxel_size
             )
-            print(f"\tFitness before deformation:\t {fitness_before:6.3f}\t")
-            print(f"\tRMSE before deformation:\t {rmse_before:6.4f}\t")
-            print(f"\tFitness after deformation:\t {fitness_after:6.3f}\t")
-            print(f"\tRMSE after deformation:\t\t {rmse_after:6.4f}\t")
+            self._results.append(
+                desc="Fitness before deformation", units="TODO", value=fitness_before
+            )
+            self._results.append(
+                desc="RMSE before deformation", units="TODO", value=rmse_before
+            )
+            self._results.append(
+                desc="Fitness after deformation", units="TODO", value=fitness_after
+            )
+            self._results.append(
+                desc="RMSE after deformation", units="TODO", value=rmse_after
+            )
 
         # Run timing metrics evaluation, always
         def _get_fps():
@@ -231,6 +249,12 @@ class DeformRefPipeline:
         avg_fps = int(np.ceil(_get_fps()))
         avg_ms = int(np.ceil(1e3 * (1 / _get_fps())))
         def_s = self._deformation_exec_time * 1e-9
-        print(f"\tDeformation Runtime:\t\t {def_s:6.3f} s")
-        print(f"\tAverage Frequency:\t\t {avg_fps} Hz")
-        print(f"\tAverage Runtime:\t\t {avg_ms} ms")
+        self._results.append(
+            desc="Deformation Runtime", units="s", value=def_s, trunc=True
+        )
+        self._results.append(
+            desc="Average Frequency", units="Hz", value=avg_fps, trunc=True
+        )
+        self._results.append(
+            desc="Average Runtime", units="ms", value=avg_ms, trunc=True
+        )

@@ -97,7 +97,7 @@ def st_mapping_mapping_onref(
         dataset=dataset,
         ref_dataset=ref_dataset,
         config=config,
-    ).run()
+    ).run().print()
 
 
 def run():
