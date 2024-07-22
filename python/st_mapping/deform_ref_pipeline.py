@@ -222,23 +222,17 @@ class DeformRefPipeline:
             gt_points, _ = self._dataset.load_map().get_points_and_colors()
             points, _ = self._ref_pcd.get_points_and_colors()
             deformed_points, _ = self._deformed_ref_pcd.get_points_and_colors()
-            fitness_before, rmse_before = compute_registration_metrics(
+            fitness_before, _ = compute_registration_metrics(
                 points, gt_points, self._config.mapping.voxel_size
             )
-            fitness_after, rmse_after = compute_registration_metrics(
+            fitness_after, _ = compute_registration_metrics(
                 deformed_points, gt_points, self._config.mapping.voxel_size
             )
             self._results.append(
                 desc="Fitness before deformation", units="%", value=fitness_before * 100
             )
             self._results.append(
-                desc="RMSE before deformation", units="%", value=rmse_before * 100
-            )
-            self._results.append(
                 desc="Fitness after deformation", units="%", value=fitness_after * 100
-            )
-            self._results.append(
-                desc="RMSE after deformation", units="%", value=rmse_after * 100
             )
 
         # Run timing metrics evaluation, always
