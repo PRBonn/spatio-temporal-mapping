@@ -19,7 +19,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-add_library(${MYPROJECT_NAME}_core STATIC)
-target_sources(${MYPROJECT_NAME}_core PRIVATE Mapping.cpp LocalMap.cpp GlobalMap.cpp Registration.cpp Deformation.cpp Threshold.cpp)
-target_link_libraries(${MYPROJECT_NAME}_core PUBLIC Eigen3::Eigen TBB::tbb Sophus::Sophus ${OpenCV_LIBS} Ceres::ceres tsl::robin_map)
-set_global_target_properties(${MYPROJECT_NAME}_core)
+add_library(st_mapping_core STATIC)
+target_sources(st_mapping_core PRIVATE Mapping.cpp LocalMap.cpp GlobalMap.cpp Registration.cpp Deformation.cpp Threshold.cpp)
+target_link_libraries(st_mapping_core PUBLIC Eigen3::Eigen TBB::tbb Sophus::Sophus ${OpenCV_LIBS} Ceres::ceres tsl::robin_map)
+set_global_target_properties(st_mapping_core)

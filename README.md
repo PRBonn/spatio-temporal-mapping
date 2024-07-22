@@ -32,7 +32,9 @@ For [tsl-robin map](https://github.com/Tessil/robin-map) and [Sophus](https://gi
 
 **NOTE**: this software has been tested only on Ubuntu 22.04 machines, we do not ensure support for other platforms right now.
 
-**NOTE2**: if you decide to not use your system installed version of Ceres, then be ready to huge memory consumption during building. For this reason, if you don't have a big RAM, just install libceres-dev with your package manager.
+Neverthless, if you are on Ubuntu 20.04, be sure to install [ceres-solver](http://ceres-solver.org/installation.html) version *2.2.0* from source and turn off the option USE_SYSTEM_TBB for CMake (this will avoid to use the old version of openTBB).
+
+**NOTE 2**: if you decide to not use your system installed version of Ceres, then be ready to huge memory consumption during building. For this reason, if you don't have a big RAM, just install libceres-dev with the command above.
 
 ## Installation
 All you have to do is to clone this repo:

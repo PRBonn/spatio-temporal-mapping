@@ -22,18 +22,15 @@
 #include "Mapping.hpp"
 
 #include <Eigen/src/Core/Matrix.h>
-#include <oneapi/tbb/blocked_range.h>
-#include <oneapi/tbb/parallel_for.h>
+#include <tbb/blocked_range.h>
+#include <tbb/parallel_for.h>
 #include <tsl/robin_set.h>
 
 #include <Eigen/Dense>
-#include <execution>
 #include <iostream>
 #include <numeric>
 #include <opencv2/core.hpp>
 #include <sophus/se3.hpp>
-
-using namespace oneapi::tbb;
 
 namespace {
 using namespace st_mapping;
@@ -92,26 +89,27 @@ PointCloud ExtractPointCloud(const cv::Mat &rgb_img,
     pcd.resize(num_valid_pixels);
 
     // Extract point cloud
-    parallel_for(blocked_range<int>(0, num_valid_pixels), [&](const blocked_range<int> &block) {
-        for (int i = block.begin(); i < block.end(); i++) {  // Access row-wise
-            // Get the uv coordinates
-            const int &linear_index_image = valid_depth_pixels[i];
-            const int u = linear_index_image % rgb_img.cols;
-            const int v = linear_index_image / rgb_img.cols;
+    parallel_for(tbb::blocked_range<int>(0, num_valid_pixels),
+                 [&](const tbb::blocked_range<int> &block) {
+                     for (int i = block.begin(); i < block.end(); i++) {  // Access row-wise
+                         // Get the uv coordinates
+                         const int &linear_index_image = valid_depth_pixels[i];
+                         const int u = linear_index_image % rgb_img.cols;
+                         const int v = linear_index_image / rgb_img.cols;
 
-            // Get references to the current point
-            auto &[pt, color] = pcd[i];
+                         // Get references to the current point
+                         auto &[pt, color] = pcd[i];
 
-            // Compute the point position
-            const double &depth = depth_img.at<double>(v, u);
-            const Eigen::Vector3d uv(u, v, 1);
-            pt = camera_extrinsics * (depth * K_inv * uv);
+                         // Compute the point position
+                         const double &depth = depth_img.at<double>(v, u);
+                         const Eigen::Vector3d uv(u, v, 1);
+                         pt = camera_extrinsics * (depth * K_inv * uv);
 
-            // Compute the point color
-            const auto &bgr_color = rgb_img.at<cv::Vec3b>(v, u);
-            color = {bgr_color[2] / 255.0, bgr_color[1] / 255.0, bgr_color[0] / 255.0};
-        }
-    });
+                         // Compute the point color
+                         const auto &bgr_color = rgb_img.at<cv::Vec3b>(v, u);
+                         color = {bgr_color[2] / 255.0, bgr_color[1] / 255.0, bgr_color[0] / 255.0};
+                     }
+                 });
 
     return pcd;
 }
@@ -159,17 +157,15 @@ std::vector<Eigen::Vector3d> Unproject2DPoints(const std::vector<Eigen::Vector2i
     const auto &K_inv = camera_intrinsics.inverse();
     const Sophus::SE3d T = pose * camera_extrinsics;
 
-    std::transform(std::execution::par, points2D.cbegin(), points2D.cend(), points3D.begin(),
-                   [&](const auto &pt2D) {
-                       const double &depth = depth_img.at<double>(pt2D[1], pt2D[0]);
-                       if (depth > 0.0 && depth > min_th && depth < max_th) {
-                           const Eigen::Vector3d uv(pt2D[0], pt2D[1], 1);
-                           return Eigen::Vector3d(T * (depth * K_inv * uv));
-                       } else {
-                           return Eigen::Vector3d(Eigen::Vector3d::Ones() *
-                                                  std::numeric_limits<double>::max());
-                       }
-                   });
+    std::transform(points2D.cbegin(), points2D.cend(), points3D.begin(), [&](const auto &pt2D) {
+        const double &depth = depth_img.at<double>(pt2D[1], pt2D[0]);
+        if (depth > 0.0 && depth > min_th && depth < max_th) {
+            const Eigen::Vector3d uv(pt2D[0], pt2D[1], 1);
+            return Eigen::Vector3d(T * (depth * K_inv * uv));
+        } else {
+            return Eigen::Vector3d(Eigen::Vector3d::Ones() * std::numeric_limits<double>::max());
+        }
+    });
 
     return points3D;
 }

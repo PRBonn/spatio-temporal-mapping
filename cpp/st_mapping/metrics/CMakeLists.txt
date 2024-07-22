@@ -19,7 +19,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-add_library(${MYPROJECT_NAME}_metrics STATIC)
-target_sources(${MYPROJECT_NAME}_metrics PRIVATE Metrics.cpp)
-target_link_libraries(${MYPROJECT_NAME}_metrics PUBLIC Eigen3::Eigen)
-set_global_target_properties(${MYPROJECT_NAME}_metrics)
+add_library(st_mapping_metrics STATIC)
+target_sources(st_mapping_metrics PRIVATE Metrics.cpp)
+target_link_libraries(st_mapping_metrics PUBLIC Eigen3::Eigen)
+set_global_target_properties(st_mapping_metrics)
