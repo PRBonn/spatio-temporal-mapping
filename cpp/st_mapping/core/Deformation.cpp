@@ -32,6 +32,10 @@
 #include <sophus/se3.hpp>
 #include <vector>
 
+namespace Eigen {
+using Vector6d = Eigen::Vector<double, 6>;
+}  // namespace Eigen
+
 namespace {
 static constexpr int StateDim = 6;
 static constexpr int MeasurementDim = 3;
