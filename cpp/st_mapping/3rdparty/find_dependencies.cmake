@@ -49,5 +49,4 @@ find_external_dependency("Sophus" "Sophus::Sophus" "${CMAKE_CURRENT_LIST_DIR}/so
 find_external_dependency("TBB" "TBB::tbb" "${CMAKE_CURRENT_LIST_DIR}/tbb/tbb.cmake")
 find_external_dependency("tsl-robin-map" "tsl::robin_map" "${CMAKE_CURRENT_LIST_DIR}/tsl_robin/tsl_robin.cmake")
 find_external_dependency("OpenCV" "opencv_core" "${CMAKE_CURRENT_LIST_DIR}/opencv/opencv.cmake")
-# find_external_dependency("Ceres" "Ceres::ceres" "${CMAKE_CURRENT_LIST_DIR}/ceres/ceres.cmake")
-find_package(Ceres REQUIRED)
+find_external_dependency("Ceres" "Ceres::ceres" "${CMAKE_CURRENT_LIST_DIR}/ceres/ceres.cmake")
