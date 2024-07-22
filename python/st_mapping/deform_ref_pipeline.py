@@ -229,16 +229,16 @@ class DeformRefPipeline:
                 deformed_points, gt_points, self._config.mapping.voxel_size
             )
             self._results.append(
-                desc="Fitness before deformation", units="TODO", value=fitness_before
+                desc="Fitness before deformation", units="%", value=fitness_before * 100
             )
             self._results.append(
-                desc="RMSE before deformation", units="TODO", value=rmse_before
+                desc="RMSE before deformation", units="%", value=rmse_before * 100
             )
             self._results.append(
-                desc="Fitness after deformation", units="TODO", value=fitness_after
+                desc="Fitness after deformation", units="%", value=fitness_after * 100
             )
             self._results.append(
-                desc="RMSE after deformation", units="TODO", value=rmse_after
+                desc="RMSE after deformation", units="%", value=rmse_after * 100
             )
 
         # Run timing metrics evaluation, always
