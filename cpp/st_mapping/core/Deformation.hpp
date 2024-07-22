@@ -26,7 +26,7 @@
 #include <Eigen/Core>
 
 namespace Eigen {
-using Vector6d = Eigen::Vector<double, 6>;
+using Vector6d = Eigen::Matrix<double, 6, 1>;
 }  // namespace Eigen
 
 namespace st_mapping {
