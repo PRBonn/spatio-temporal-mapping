@@ -19,6 +19,6 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-pybind11_add_module(${MYPROJECT_NAME}_pybind MODULE ${MYPROJECT_NAME}_pybind.cpp)
-target_link_libraries(${MYPROJECT_NAME}_pybind PRIVATE ${MYPROJECT_NAME}_core ${MYPROJECT_NAME}_metrics)
-install(TARGETS ${MYPROJECT_NAME}_pybind DESTINATION .)
+pybind11_add_module(st_mapping_pybind MODULE st_mapping_pybind.cpp)
+target_link_libraries(st_mapping_pybind PRIVATE st_mapping_core st_mapping_metrics)
+install(TARGETS st_mapping_pybind DESTINATION .)

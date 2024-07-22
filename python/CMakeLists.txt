@@ -20,12 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 cmake_minimum_required(VERSION 3.16...3.26)
-if(DEFINED SKBUILD_PROJECT_NAME)
-  set(MYPROJECT_NAME ${SKBUILD_PROJECT_NAME})
-else()
-  set(MYPROJECT_NAME st_mapping)
-endif()
-project(${MYPROJECT_NAME}_pybind VERSION 0.1.0 LANGUAGES CXX)
+project(st_mapping_pybind VERSION 0.1.0 LANGUAGES CXX)
 
 # Set build type
 set(CMAKE_BUILD_TYPE Release)
@@ -37,7 +32,7 @@ set(PYBIND11_NEWPYTHON ON)
 find_package(pybind11 CONFIG REQUIRED)
 
 # Import the cpp part
-add_subdirectory(${PROJECT_SOURCE_DIR}/../cpp/${MYPROJECT_NAME} ${CMAKE_CURRENT_BINARY_DIR}/${MYPROJECT_NAME})
+add_subdirectory(${PROJECT_SOURCE_DIR}/../cpp/st_mapping ${CMAKE_CURRENT_BINARY_DIR}/st_mapping)
 
 # Import the pybind code
-add_subdirectory(${MYPROJECT_NAME}/pybind)
+add_subdirectory(st_mapping/pybind)
