@@ -31,6 +31,8 @@ from st_mapping.core.global_map import GlobalMap
 from tqdm.auto import trange
 import time
 
+from st_mapping.tools import PrettyResults
+
 
 class MappingPipeline:
 
@@ -42,6 +44,7 @@ class MappingPipeline:
         self._global_map = GlobalMap()
         self._poses = []
         self._exec_times = []
+        self._results = PrettyResults()
 
         self._n_frames = len(dataset)
         if self._config.n_frames > 1 and self._config.n_frames < self._n_frames:
@@ -59,7 +62,7 @@ class MappingPipeline:
         self._save_results()
         self._visualize_map()
         self._run_evaluation()
-        return
+        return self._results
 
     def _run_pipeline(self):
         for idx in trange(0, self._n_frames, unit="frames", dynamic_ncols=True):
@@ -100,10 +103,18 @@ class MappingPipeline:
             ate_rot, ate_tra = absolute_trajectory_error(
                 self._dataset.get_gt_poses(), self._poses
             )
-            print(f"\tRelative Translation Error(RPE): {avg_tra:6.3f}\t %")
-            print(f"\tRelative Rotational Error(RRE):\t {avg_rot:6.3f}\t deg/100m")
-            print(f"\tAbsolute Trajectory Error:\t {ate_tra:6.3f}\t m")
-            print(f"\tAbsolute Rotational Error:\t {ate_rot:6.3f}\t rad")
+            self._results.append(
+                desc="Relative Translation Error(RPE)", units="%", value=avg_tra
+            )
+            self._results.append(
+                desc="Relative Rotational Error(RRE)", units="deg/100m", value=avg_rot
+            )
+            self._results.append(
+                desc="Absolute Trajectory Error (ATE)", units="m", value=ate_tra
+            )
+            self._results.append(
+                desc="Absolute Rotational Error (ARE)", units="rad", value=ate_rot
+            )
 
         # Run timing metrics evaluation, always
         def _get_fps():
@@ -112,5 +123,9 @@ class MappingPipeline:
 
         avg_fps = int(np.ceil(_get_fps()))
         avg_ms = int(np.ceil(1e3 * (1 / _get_fps())))
-        print(f"\tAverage Frequency:\t\t {avg_fps} Hz")
-        print(f"\tAverage Runtime:\t\t {avg_ms} ms")
+        self._results.append(
+            desc="Average Frequency", units="Hz", value=avg_fps, trunc=True
+        )
+        self._results.append(
+            desc="Average Runtime", units="ms", value=avg_ms, trunc=True
+        )

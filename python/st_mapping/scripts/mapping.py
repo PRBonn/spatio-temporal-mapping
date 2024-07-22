@@ -86,7 +86,7 @@ def st_mapping_mapping(
         dataset=dataset,
         config=config,
         visual_odometry=visual_odometry,
-    ).run()
+    ).run().print()
 
 
 def run():
