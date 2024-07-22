@@ -160,7 +160,7 @@ DeformationGraph::DeformationGraph(const std::vector<Eigen::Vector3d> &cloud,
     this->_ExtractNodesFromCloud();
     this->_ExtractEdges();
     this->_InitializeProblemContraints();
-};
+}
 
 void DeformationGraph::_InitializeProblemContraints() {
     // Initialize the state
