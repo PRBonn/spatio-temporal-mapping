@@ -21,7 +21,7 @@
 # SOFTWARE.
 # Strongly inspired by: https://github.com/PRBonn/kiss-icp
 function(set_global_target_properties target)
-  target_compile_features(${target} PUBLIC cxx_std_20)
+  target_compile_features(${target} PRIVATE cxx_std_20)
   target_compile_options(
     ${target}
     PRIVATE -fdiagnostics-color=always
