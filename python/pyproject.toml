@@ -20,6 +20,7 @@ dependencies = [
     "typer[all]>=0.6.0",
     "pyyaml>=5.4.1",
     "pyquaternion",
+    "pydantic>=2",
     "opencv-python>=4.9.0",
     "torch>=2.3.0",#TODO: probably you can lower the version
 ]
