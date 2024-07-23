@@ -163,14 +163,14 @@ class GenericDataset:
             print(
                 f"[ERROR] {idx} is an invalid dataset index, dataset len: {self._n_images}."
             )
-        rgb_img = cv2.imread(str(self._main_folder / "rgb" / self._rgb_filenames[idx]))
-        depth_img = (
-            cv2.imread(
-                str(self._main_folder / "depth" / self._depth_filenames[idx]),
-                cv2.IMREAD_ANYDEPTH,
-            ).astype("float64", copy=False)
-            / self._depth_scale
+        rgb_img = cv2.imread(
+            str(self._main_folder / "rgb" / self._rgb_filenames[idx]), cv2.IMREAD_COLOR
         )
+        depth_unprocessed = cv2.imread(
+            str(self._main_folder / "depth" / self._depth_filenames[idx]),
+            cv2.IMREAD_UNCHANGED,
+        )
+        depth_img = (depth_unprocessed / self._depth_scale).astype(np.float32)
         return rgb_img, depth_img
 
     def img_width(self):
