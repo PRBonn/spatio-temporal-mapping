@@ -28,10 +28,9 @@ from st_mapping.core.local_map import LocalMap
 from st_mapping.core.mapping import PointCloud, voxel_down_sample, threshold
 from st_mapping.core.registration import correct_pose_with_icp
 from st_mapping.core.threshold import AdaptiveThreshold
-from st_mapping.tools import visualize_point_cloud
 
 
-class DumpOdometry:
+class StubOdometry:
     def __init__(
         self,
         config: StMappingConfig,

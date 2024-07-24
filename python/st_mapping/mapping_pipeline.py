@@ -27,17 +27,21 @@ from st_mapping.tools import (
     save_point_cloud,
     PrettyResults,
 )
-from st_mapping.odometry import DumpOdometry, Odometry
+from st_mapping.odometry import StubOdometry, Odometry
 from st_mapping.core.metrics import sequence_error, absolute_trajectory_error
 from st_mapping.core.mapping import extract_point_cloud
 from st_mapping.core.global_map import GlobalMap
 from tqdm.auto import trange
 import time
 
+from st_mapping.tools.visualizer import PosesVisualizer, StubVisualizer
+
 
 class MappingPipeline:
 
-    def __init__(self, dataset, config: StMappingConfig, visual_odometry: bool):
+    def __init__(
+        self, dataset, config: StMappingConfig, visual_odometry: bool, visualize: bool
+    ):
         self._dataset = dataset
         self._config = config
         self._visual_odometry = visual_odometry
@@ -51,12 +55,14 @@ class MappingPipeline:
         if self._config.n_frames > 1 and self._config.n_frames < self._n_frames:
             self._n_frames = self._config.n_frames
 
-        if self._visual_odometry:
-            self._odometry = Odometry(config, self._dataset.get_extrinsics())
-        else:
-            self._odometry = DumpOdometry(
+        self._odometry = (
+            Odometry(config, self._dataset.get_extrinsics())
+            if visual_odometry
+            else StubOdometry(
                 config, self._dataset.get_extrinsics(), self._dataset.get_poses()
             )
+        )
+        self._visualizer = PosesVisualizer() if visualize else StubVisualizer()
 
     def run(self):
         self._run_pipeline()
@@ -80,8 +86,10 @@ class MappingPipeline:
             )
             processed_frame, pose = self._odometry.register_frame(frame)
             self._global_map.integrate_point_cloud(processed_frame, pose)
-            self._poses.append(pose)
             self._exec_times.append(time.perf_counter_ns() - start_time)
+            self._poses.append(pose)
+            self._visualizer.update(pose)
+        self._visualizer.quit()
 
     def _save_results(self):
         if self._visual_odometry:

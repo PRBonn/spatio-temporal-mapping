@@ -63,6 +63,13 @@ def st_mapping_mapping(
         show_default=False,
         help="[Optional] Path to the configuration file",
     ),
+    visualize: bool = typer.Option(
+        False,
+        "--visualize",
+        "-v",
+        help="[Optional] Open an online visualization of the mapping system",
+        rich_help_panel="Additional Options",
+    ),
 ):
     # Argument parsing
     visual_odometry = not just_mapping
@@ -86,6 +93,7 @@ def st_mapping_mapping(
         dataset=dataset,
         config=config,
         visual_odometry=visual_odometry,
+        visualize=visualize,
     ).run().print()
 
 
