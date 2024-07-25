@@ -103,7 +103,9 @@ class PangolinoVisualizer(StubVisualizer):
 
     def _visualize_point_cloud(self, frame_pcd):
         points, colors = frame_pcd.get_points_and_colors()
-        cloud = ps.register_point_cloud("frame_pcd", points, radius=0.002)
+        cloud = ps.register_point_cloud(
+            "frame_pcd", points, radius=0.002, point_render_mode="quad"
+        )
         cloud.add_color_quantity("colors", colors, enabled=True)
 
     def _update_visualizer(self):
