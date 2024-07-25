@@ -34,7 +34,11 @@ from st_mapping.core.global_map import GlobalMap
 from tqdm.auto import trange
 import time
 
-from st_mapping.tools.visualizer import PosesVisualizer, StubVisualizer
+from st_mapping.tools.visualizer import (
+    PosesVisualizer,
+    StubVisualizer,
+    PangolinoVisualizer,
+)
 
 
 class MappingPipeline:
@@ -62,7 +66,8 @@ class MappingPipeline:
                 config, self._dataset.get_extrinsics(), self._dataset.get_poses()
             )
         )
-        self._visualizer = PosesVisualizer() if visualize else StubVisualizer()
+        # self._visualizer = PosesVisualizer() if visualize else StubVisualizer()
+        self._visualizer = PangolinoVisualizer()
 
     def run(self):
         self._run_pipeline()
@@ -88,7 +93,7 @@ class MappingPipeline:
             self._global_map.integrate_point_cloud(processed_frame, pose)
             self._exec_times.append(time.perf_counter_ns() - start_time)
             self._poses.append(pose)
-            self._visualizer.update(pose)
+            self._visualizer.update(pose, rgb_img)
         self._visualizer.quit()
 
     def _save_results(self):

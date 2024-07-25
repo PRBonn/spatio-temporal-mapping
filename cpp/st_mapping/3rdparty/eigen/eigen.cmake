@@ -41,4 +41,3 @@ if(NOT eigen_POPULATED)
     set_target_properties(eigen PROPERTIES INTERFACE_SYSTEM_INCLUDE_DIRECTORIES "${eigen_include_dirs}")
   endif()
 endif()
-

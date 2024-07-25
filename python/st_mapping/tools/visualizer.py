@@ -31,11 +31,13 @@ import os
 from abc import ABC
 from functools import partial
 from typing import Callable, List
+import polyscope as ps
+import cv2
 
 import numpy as np
 
 YELLOW = np.array([1, 0.706, 0])
-RED = np.array([128, 0, 0]) / 255.0
+RED = [1.0, 0.0, 0.0]
 BLACK = np.array([0, 0, 0])
 WHITE = np.array([1.0, 1.0, 1.0])
 BLUE = np.array([0.4, 0.5, 0.9])
@@ -47,10 +49,40 @@ class StubVisualizer(ABC):
     def __init__(self):
         pass
 
-    def update(self, pose):
+    def update(self, pose, rgb_img):
         pass
 
     def quit(self):
+        pass
+
+
+class PangolinoVisualizer(StubVisualizer):
+    def __init__(self):
+        ps.init()
+        ps.set_ground_plane_mode("none")
+        self._next_cam_number = 0
+        self._cameras = []
+
+    def update(self, pose, rgb_img):
+        # Create new camera pose
+        camera_params = ps.CameraParameters(
+            ps.CameraIntrinsics(fov_vertical_deg=60, aspect=2),
+            ps.CameraExtrinsics(mat=pose),
+        )
+        new_cam = ps.register_camera_view(f"cam {self._next_cam_number}", camera_params)
+        new_cam.set_widget_color(RED)
+        self._next_cam_number += 1
+        self._cameras.append(new_cam)
+
+        # Resize and re-color previous camera
+        if len(self._cameras) > 1:
+            self._cameras[-2].set_widget_color(BLACK)
+            self._cameras[-2].set_widget_focal_length(0.02)
+
+        ps.frame_tick()
+
+    def quit(self):
+        ps.unshow()
         pass
 
 
@@ -73,11 +105,16 @@ class PosesVisualizer(StubVisualizer):
         self._vis = self._o3d.visualization.VisualizerWithKeyCallback()
         self._register_key_callbacks()
         self._initialize_visualizer()
+        self._img_window = cv2.namedWindow("Image Stream")
 
     def quit(self):
+        cv2.destroyAllWindows()
         self._vis.destroy_window()
 
-    def update(self, pose):
+    def update(self, pose, rgb_img):
+        cv2.imshow("Image Stream", rgb_img)
+        cv2.waitKey(1)
+
         new_frame = self._o3d.geometry.TriangleMesh.create_coordinate_frame(SPHERE_SIZE)
         new_frame.transform(pose)
         self._frames.append(new_frame)
@@ -121,7 +158,7 @@ class PosesVisualizer(StubVisualizer):
         self._register_key_callback(["W"], self._set_white_background)
 
     def _set_black_background(self, vis):
-        vis.get_render_option().background_color = BLACK
+        vis.get_render_option().background_color = np.array(BLACK)
 
     def _set_white_background(self, vis):
         vis.get_render_option().background_color = WHITE

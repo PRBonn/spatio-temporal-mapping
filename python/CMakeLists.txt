@@ -29,6 +29,7 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 # "Import" pybind11
 set(PYBIND11_NEWPYTHON ON)
+find_package(Python COMPONENTS Interpreter Development.Module REQUIRED)
 find_package(pybind11 CONFIG REQUIRED)
 
 # Import the cpp part

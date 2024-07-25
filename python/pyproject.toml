@@ -17,10 +17,11 @@ dependencies = [
     "pathlib",
     "rich",
     "open3d>=0.13",
-    "typer[all]>=0.6.0",
+    "polyscope>=2.2.1",
+    "typer>=0.6.0",
     "pyyaml>=5.4.1",
     "pyquaternion",
-    "pydantic>=2",
+    "pydantic>=1.10.17",
     "opencv-python>=4.9.0",
     "torch>=2.3.0",#TODO: probably you can lower the version
 ]
