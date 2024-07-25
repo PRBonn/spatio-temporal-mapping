@@ -72,8 +72,13 @@ class PangolinoVisualizer(StubVisualizer):
         ps.set_user_callback(PangolinoVisualizer._gui_callback)
         self._next_cam_number = 0
         self._cameras = []
+        self._img_window = cv2.namedWindow("Image Stream")
 
     def update(self, pose, rgb_img):
+        # Visualize image
+        cv2.imshow("Image Stream", rgb_img)
+        cv2.waitKey(1)
+
         # Create new camera pose
         camera_params = ps.CameraParameters(
             ps.CameraIntrinsics(fov_vertical_deg=60, aspect=2),
@@ -97,20 +102,8 @@ class PangolinoVisualizer(StubVisualizer):
 
     def quit(self):
         ps.unshow()
+        cv2.destroyAllWindows()
         pass
-
-    # def _register_key_callback(self):
-    #     self._register_key_callback(["Ā", "Q", "\x1b"], self._quit)
-    #     self._register_key_callback([" "], self._start_stop)
-    #     self._register_key_callback(["N"], self._next_frame)
-    #     self._register_key_callback(["C"], self._center_viewpoint)
-    #     self._register_key_callback(["B"], self._set_black_background)
-    #     self._register_key_callback(["W"], self._set_white_background)
-
-    def _quit(self, vis):
-        print("Destroying Visualizer")
-        ps.unshow()
-        os._exit(0)
 
     @staticmethod
     def _gui_callback():
@@ -122,6 +115,7 @@ class PangolinoVisualizer(StubVisualizer):
         if psim.Button("QUIT"):
             print("Destroying Visualizer")
             ps.unshow()
+            cv2.destroyAllWindows()
             os._exit(0)
 
     def _start_stop(self, vis):
