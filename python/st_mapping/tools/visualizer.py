@@ -32,6 +32,7 @@ from abc import ABC
 from functools import partial
 from typing import Callable, List
 import polyscope as ps
+import polyscope.imgui as psim
 import cv2
 
 import numpy as np
@@ -58,8 +59,17 @@ class StubVisualizer(ABC):
 
 class PangolinoVisualizer(StubVisualizer):
     def __init__(self):
+
+        # Initialize GUI controls
+        self._block_vis = True
+        self._play_crun = False
+
+        # Initialize visualizer
         ps.init()
+        ps._block_execution = True
+        ps._play_mode = False
         ps.set_ground_plane_mode("none")
+        ps.set_user_callback(PangolinoVisualizer._gui_callback)
         self._next_cam_number = 0
         self._cameras = []
 
@@ -79,11 +89,43 @@ class PangolinoVisualizer(StubVisualizer):
             self._cameras[-2].set_widget_color(BLACK)
             self._cameras[-2].set_widget_focal_length(0.02)
 
-        ps.frame_tick()
+        while ps._block_execution:
+            ps.frame_tick()
+            if ps._play_mode:
+                break
+        ps._block_execution = not ps._block_execution
 
     def quit(self):
         ps.unshow()
         pass
+
+    # def _register_key_callback(self):
+    #     self._register_key_callback(["Ā", "Q", "\x1b"], self._quit)
+    #     self._register_key_callback([" "], self._start_stop)
+    #     self._register_key_callback(["N"], self._next_frame)
+    #     self._register_key_callback(["C"], self._center_viewpoint)
+    #     self._register_key_callback(["B"], self._set_black_background)
+    #     self._register_key_callback(["W"], self._set_white_background)
+
+    def _quit(self, vis):
+        print("Destroying Visualizer")
+        ps.unshow()
+        os._exit(0)
+
+    @staticmethod
+    def _gui_callback():
+        if psim.Button("START/STOP"):
+            ps._play_mode = not ps._play_mode
+        if not ps._play_mode:
+            if psim.Button("NEXT FRAME"):
+                ps._block_execution = not ps._block_execution
+        if psim.Button("QUIT"):
+            print("Destroying Visualizer")
+            ps.unshow()
+            os._exit(0)
+
+    def _start_stop(self, vis):
+        self._play_crun = not self._play_crun
 
 
 class PosesVisualizer(StubVisualizer):
