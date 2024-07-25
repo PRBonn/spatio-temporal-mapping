@@ -65,13 +65,11 @@ class MappingPipeline:
                 config, self._dataset.get_extrinsics(), self._dataset.get_poses()
             )
         )
-        # self._visualizer = PosesVisualizer() if visualize else StubVisualizer()
         self._visualizer = PangolinoVisualizer() if visualize else StubVisualizer()
 
     def run(self):
         self._run_pipeline()
         self._save_results()
-        # self._visualize_map()
         self._run_evaluation()
         return self._results
 
@@ -95,7 +93,7 @@ class MappingPipeline:
             self._visualizer.update(
                 pose @ self._dataset.get_extrinsics(),
                 rgb_img,
-                self._odometry._local_map,
+                self._odometry._local_map,  # TODO: I don't like this too much
             )
         self._visualizer.quit()
 
@@ -108,10 +106,6 @@ class MappingPipeline:
         points, colors = self._global_map.get_points_and_colors()
         save_point_cloud(pcd_path, points, colors)
         print("Map saved at", pcd_path)
-
-    def _visualize_map(self):
-        points, colors = self._global_map.get_points_and_colors()
-        visualize_point_cloud(points, colors)
 
     def _run_evaluation(self):
         # Run estimation metrics evaluation, only when GT data was provided
