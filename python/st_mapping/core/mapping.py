@@ -29,7 +29,8 @@ class PointCloud:
         self._internal_pcd = pcd
 
     def get_points_and_colors(self) -> Tuple[np.ndarray, np.ndarray]:
-        return self._internal_pcd._get_points_and_colors()
+        points, colors = self._internal_pcd._get_points_and_colors()
+        return np.asarray(points), np.asarray(colors)
 
 
 def point_cloud_from_points_and_colors(

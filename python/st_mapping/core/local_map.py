@@ -47,4 +47,5 @@ class LocalMap:
         )
 
     def get_points_and_colors(self) -> Tuple[np.ndarray, np.ndarray]:
-        return self._internal_local_map._get_points_and_colors()
+        points, colors = self._internal_local_map._get_points_and_colors()
+        return np.asarray(points), np.asarray(colors)
