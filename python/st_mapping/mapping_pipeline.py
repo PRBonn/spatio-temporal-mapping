@@ -67,7 +67,7 @@ class MappingPipeline:
             )
         )
         # self._visualizer = PosesVisualizer() if visualize else StubVisualizer()
-        self._visualizer = PangolinoVisualizer()
+        self._visualizer = PangolinoVisualizer() if visualize else StubVisualizer()
 
     def run(self):
         self._run_pipeline()

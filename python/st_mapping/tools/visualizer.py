@@ -59,26 +59,40 @@ class StubVisualizer(ABC):
 
 class PangolinoVisualizer(StubVisualizer):
     def __init__(self):
+        # Initialize visualizer
+        self._initialize_visualizer()
+        self._img_window = cv2.namedWindow("Image Stream")
 
         # Initialize GUI controls
-        self._block_vis = True
-        self._play_crun = False
-
-        # Initialize visualizer
-        ps.init()
         ps._block_execution = True
         ps._play_mode = False
-        ps.set_ground_plane_mode("none")
-        ps.set_user_callback(PangolinoVisualizer._gui_callback)
+
+        # Initilize attributes
         self._next_cam_number = 0
         self._cameras = []
-        self._img_window = cv2.namedWindow("Image Stream")
 
     def update(self, pose, rgb_img):
         # Visualize image
         cv2.imshow("Image Stream", rgb_img)
         cv2.waitKey(1)
 
+        # Visualize camera pose
+        self._update_camera_pose(pose)
+
+        # Visualization loop
+        self._update_visualizer()
+
+    def quit(self):
+        ps.unshow()
+        cv2.destroyAllWindows()
+        pass
+
+    def _initialize_visualizer(self):
+        ps.init()
+        ps.set_ground_plane_mode("none")
+        ps.set_user_callback(PangolinoVisualizer._gui_callback)
+
+    def _update_camera_pose(self, pose):
         # Create new camera pose
         camera_params = ps.CameraParameters(
             ps.CameraIntrinsics(fov_vertical_deg=60, aspect=2),
@@ -94,32 +108,30 @@ class PangolinoVisualizer(StubVisualizer):
             self._cameras[-2].set_widget_color(BLACK)
             self._cameras[-2].set_widget_focal_length(0.02)
 
+    def _update_visualizer(self):
         while ps._block_execution:
             ps.frame_tick()
             if ps._play_mode:
                 break
         ps._block_execution = not ps._block_execution
 
-    def quit(self):
-        ps.unshow()
-        cv2.destroyAllWindows()
-        pass
-
     @staticmethod
     def _gui_callback():
+        # START/STOP
         if psim.Button("START/STOP"):
             ps._play_mode = not ps._play_mode
+
+        # NEXT FRAME
         if not ps._play_mode:
             if psim.Button("NEXT FRAME"):
                 ps._block_execution = not ps._block_execution
+
+        # QUIT
         if psim.Button("QUIT"):
             print("Destroying Visualizer")
             ps.unshow()
             cv2.destroyAllWindows()
             os._exit(0)
-
-    def _start_stop(self, vis):
-        self._play_crun = not self._play_crun
 
 
 class PosesVisualizer(StubVisualizer):
