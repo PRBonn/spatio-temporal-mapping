@@ -104,13 +104,14 @@ class PangolinoVisualizer(StubVisualizer):
         self._update_visualizer()
 
     def keep_running(self):
+        cv2.destroyAllWindows()
         PangolinoVisualizer.play_mode = False
         PangolinoVisualizer.block_execution = True
         ps.set_user_callback(ending_gui_callback)
         ps.show()
 
     def _initialize_visualizer(self):
-        ps.set_program_name("Spatio Temporal Mapping Visualizer")
+        ps.set_program_name("Spatio-Temporal Mapping Visualizer")
         ps.init()
         ps.set_background_color(BACKGROUND_COLOR)
         ps.set_verbosity(0)

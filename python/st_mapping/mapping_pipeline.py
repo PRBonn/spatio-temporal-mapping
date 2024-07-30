@@ -97,7 +97,6 @@ class MappingPipeline:
             )
         # self._visualizer.quit()
         self._visualizer.keep_running()
-        print("SONO QUIR")
 
     def _save_results(self):
         if self._visual_odometry:
