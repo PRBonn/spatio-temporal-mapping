@@ -27,16 +27,8 @@ import cv2
 
 import numpy as np
 
-# OLD PARAMETERS: TODO remove them
-YELLOW = np.array([1, 0.706, 0])
-RED = [1.0, 0.0, 0.0]
-BLACK = np.array([0, 0, 0])
-WHITE = np.array([1.0, 1.0, 1.0])
-BLUE = np.array([0.4, 0.5, 0.9])
-ARB = np.array([0.1, 0.5, 0.6])
-SPHERE_SIZE = 0.20
-
 BACKGROUND_COLOR = [0.8470, 0.8588, 0.8863]
+CAMERA_COLOR = [1.0, 0.0, 0.0]
 
 
 class StubVisualizer(ABC):
@@ -80,6 +72,10 @@ def main_gui_callback():
     quit_callback()
 
 
+def ending_gui_callback():
+    quit_callback()
+
+
 class PangolinoVisualizer(StubVisualizer):
     # Static parameteters
     play_mode: bool = False
@@ -107,6 +103,12 @@ class PangolinoVisualizer(StubVisualizer):
         # Visualization loop
         self._update_visualizer()
 
+    def keep_running(self):
+        PangolinoVisualizer.play_mode = False
+        PangolinoVisualizer.block_execution = True
+        ps.set_user_callback(ending_gui_callback)
+        ps.show()
+
     def _initialize_visualizer(self):
         ps.set_program_name("Spatio Temporal Mapping Visualizer")
         ps.init()
@@ -117,28 +119,19 @@ class PangolinoVisualizer(StubVisualizer):
         ps.set_build_default_gui_panels(False)
 
     def _update_camera_pose(self, pose):
-        pass
-
-    # Create new camera pose
-    # camera_params = ps.CameraParameters(
-    #     ps.CameraIntrinsics(fov_vertical_deg=30, aspect=2),
-    #     ps.CameraExtrinsics(mat=np.linalg.inv(pose)),
-    # )
-    # new_cam = ps.register_camera_view(f"cam {self._next_cam_number}", camera_params)
-    # new_cam.set_widget_color(RED)
-    # self._next_cam_number += 1
-    # self._cameras.append(new_cam)
-
-    # # Resize and re-color previous camera
-    # if len(self._cameras) > 1:
-    #     self._cameras[-2].set_widget_color(BLACK)
-    #     self._cameras[-2].set_widget_focal_length(0.02)
+        self._camera_poses.append(pose)
+        camera_params = ps.CameraParameters(
+            ps.CameraIntrinsics(fov_vertical_deg=30, aspect=2),
+            ps.CameraExtrinsics(mat=np.linalg.inv(pose)),
+        )
+        new_cam = ps.register_camera_view("camera", camera_params)
+        new_cam.set_widget_color(CAMERA_COLOR)
 
     def _visualize_point_cloud(self, frame_pcd):
         points, colors = frame_pcd.get_points_and_colors()
         cloud = ps.register_point_cloud("frame_pcd", points, point_render_mode="quad")
         cloud.add_color_quantity("colors", colors, enabled=True)
-        cloud.set_radius(0.01, relative=False)
+        cloud.set_radius(0.005, relative=False)
 
     def _update_visualizer(self):
         while PangolinoVisualizer.block_execution:

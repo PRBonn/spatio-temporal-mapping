@@ -93,9 +93,11 @@ class MappingPipeline:
             self._visualizer.update(
                 pose @ self._dataset.get_extrinsics(),
                 rgb_img,
-                self._odometry._local_map,  # TODO: I don't like this too much
+                self._odometry._local_map,
             )
-        self._visualizer.quit()
+        # self._visualizer.quit()
+        self._visualizer.keep_running()
+        print("SONO QUIR")
 
     def _save_results(self):
         if self._visual_odometry:
