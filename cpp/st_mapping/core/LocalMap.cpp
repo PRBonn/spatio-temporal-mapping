@@ -52,6 +52,7 @@ PointCloud LocalMap::IntegratePointCloud(const PointCloud &pcd,
             integrated_pcd.emplace_back(colored_point);
         }
     });
+    integrated_pcd.shrink_to_fit();
     _Resize((T * _camera_displacement).translation());
     return integrated_pcd;
 }
