@@ -126,6 +126,7 @@ PointCloud VoxelDownSample(const PointCloud &pcd, const double voxel_size) {
             pcd_dowsampled.emplace_back(colored_point);
         }
     });
+    pcd_dowsampled.shrink_to_fit();
     return pcd_dowsampled;
 }
 
