@@ -65,7 +65,6 @@ class MappingVisualizer(StubVisualizer):
     def __init__(self):
         # Initialize visualizer
         self._initialize_visualizer()
-        self._img_window = cv2.namedWindow("Image Stream")
 
         # Initilize attributes
         self._camera_poses = []
@@ -112,7 +111,9 @@ class MappingVisualizer(StubVisualizer):
         cv2.namedWindow("Camera Stream")
 
     def _visualize_image(self, img):
-        cv2.imshow("Camera Stream", img)
+        rgb_img = cv2.rotate(img, cv2.ROTATE_90_CLOCKWISE)
+        cv2.imshow("Camera Stream", rgb_img)
+        cv2.setWindowProperty("Camera Stream", cv2.WND_PROP_TOPMOST, 1)
         cv2.waitKey(1)
 
     def _update_camera_pose(self, pose):
