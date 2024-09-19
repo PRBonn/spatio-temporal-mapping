@@ -22,7 +22,6 @@
 import numpy as np
 from st_mapping.config.config import StMappingConfig
 from st_mapping.tools import (
-    visualize_point_cloud,
     save_kitti_poses,
     save_point_cloud,
     PrettyResults,
@@ -36,7 +35,7 @@ import time
 
 from st_mapping.tools.visualizer import (
     StubVisualizer,
-    PangolinoVisualizer,
+    MappingVisualizer,
 )
 
 
@@ -65,13 +64,15 @@ class MappingPipeline:
                 config, self._dataset.get_extrinsics(), self._dataset.get_poses()
             )
         )
-        self._visualizer = PangolinoVisualizer() if visualize else StubVisualizer()
+        self._visualizer = MappingVisualizer() if visualize else StubVisualizer()
 
     def run(self):
         self._run_pipeline()
         self._save_results()
         self._run_evaluation()
-        return self._results
+        self._results.print()
+        self._visualizer.keep_running()
+        return
 
     def _run_pipeline(self):
         for idx in trange(0, self._n_frames, unit="frames", dynamic_ncols=True):
@@ -95,8 +96,6 @@ class MappingPipeline:
                 rgb_img,
                 self._odometry._local_map,
             )
-        # self._visualizer.quit()
-        self._visualizer.keep_running()
 
     def _save_results(self):
         if self._visual_odometry:

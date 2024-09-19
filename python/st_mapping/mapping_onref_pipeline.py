@@ -35,9 +35,14 @@ from st_mapping.core.global_map import GlobalMap
 from tqdm.auto import trange
 import time
 
+from st_mapping.tools.visualizer import (
+    StubVisualizer,
+    MappingVisualizer,
+)
+
 
 class MappingOnRefPipeline:
-    def __init__(self, dataset, ref_dataset, config: StMappingConfig):
+    def __init__(self, dataset, ref_dataset, config: StMappingConfig, visualize: bool):
         self._dataset = dataset
         self._ref_dataset = ref_dataset
         self._config = config
@@ -58,13 +63,15 @@ class MappingOnRefPipeline:
             self._ref_dataset.get_pose(0),
             self._dataset.get_extrinsics(),
         )
+        self._visualizer = MappingVisualizer() if visualize else StubVisualizer()
 
     def run(self):
         self._run_pipeline()
         self._save_results()
-        self._visualize_map()
         self._run_evaluation()
-        return self._results
+        self._results.print()
+        self._visualizer.keep_running()
+        return
 
     def _run_pipeline(self):
         for idx in trange(0, self._n_frames, unit="frames", dynamic_ncols=True):
@@ -81,8 +88,13 @@ class MappingOnRefPipeline:
             )
             processed_frame, pose = self._odometry.register_frame(frame)
             self._global_map.integrate_point_cloud(processed_frame, pose)
-            self._poses.append(pose)
             self._exec_times.append(time.perf_counter_ns() - start_time)
+            self._poses.append(pose)
+            self._visualizer.update(
+                pose @ self._dataset.get_extrinsics(),
+                rgb_img,
+                self._odometry._local_map,
+            )
 
     def _save_results(self):
         poses_path = self._dataset.get_folder_path() / "poses.txt"

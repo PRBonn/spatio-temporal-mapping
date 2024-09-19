@@ -53,11 +53,14 @@ class StubVisualizer(ABC):
     def update(self, pose, rgb_img, frame_pcd):
         pass
 
+    def keep_running(self):
+        pass
+
     def quit(self):
         pass
 
 
-class PangolinoVisualizer(StubVisualizer):
+class MappingVisualizer(StubVisualizer):
     # --- PUBLIC INTERFACE ---------------------------------------------------------------
     def __init__(self):
         # Initialize visualizer
