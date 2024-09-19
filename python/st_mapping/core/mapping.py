@@ -96,8 +96,9 @@ def unproject_2d_points(
 def filter_matches(
     target_points_2d: np.ndarray, ref_points_2d: np.ndarray, distance_th: float
 ) -> Tuple[np.ndarray, np.ndarray]:
-    return st_mapping_pybind._filter_matches(
+    trg, ref = st_mapping_pybind._filter_matches(
         st_mapping_pybind._Vector3dVector(target_points_2d),
         st_mapping_pybind._Vector3dVector(ref_points_2d),
         distance_th,
     )
+    return np.asarray(trg), np.asarray(ref)

@@ -67,6 +67,13 @@ def st_mapping_deform_ref(
         show_default=False,
         help="[Optional] Path to the configuration file",
     ),
+    visualize: bool = typer.Option(
+        False,
+        "--visualize",
+        "-v",
+        help="[Optional] Open an online visualization of the mapping system",
+        rich_help_panel="Additional Options",
+    ),
 ):
     # Argument parsing
     if not dataloader:
@@ -96,7 +103,8 @@ def st_mapping_deform_ref(
         dataset=dataset,
         ref_dataset=ref_dataset,
         config=config,
-    ).run().print()
+        visualize=visualize,
+    ).run()
 
 
 def run():

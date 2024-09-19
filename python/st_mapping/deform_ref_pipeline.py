@@ -47,9 +47,14 @@ from st_mapping.core.deformation import DeformationGraph
 from tqdm.auto import trange
 import time
 
+from st_mapping.tools.visualizer import (
+    StubVisualizer,
+    MappingVisualizer,
+)
+
 
 class DeformRefPipeline:
-    def __init__(self, dataset, ref_dataset, config: StMappingConfig):
+    def __init__(self, dataset, ref_dataset, config: StMappingConfig, visualize: bool):
         self._dataset = dataset
         self._ref_dataset = ref_dataset
         self._config = config
@@ -77,14 +82,18 @@ class DeformRefPipeline:
         self._ref_matched_points = np.empty((0, 3), dtype=np.float64)
         self._matching_frequency = config.image_matcher.matching_frequency
 
+        self._visualizer = MappingVisualizer() if visualize else StubVisualizer()
+        self._visualizer.register_reference_map(self._ref_pcd)
+
     def run(self):
         self._run_pipeline()
-        self._visualize_matches()
         self._deform()
         self._save_results()
-        self._visualize_map()
         self._run_evaluation()
-        return self._results
+        self._results.print()
+        # TODO: add deformed map in the visualizer
+        self._visualizer.keep_running()
+        return
 
     def _run_pipeline(self):
         for idx in trange(0, self._n_frames, unit="frames", dynamic_ncols=True):
@@ -99,12 +108,18 @@ class DeformRefPipeline:
                 self._config.dataset.depth_max_th,
                 self._config.dataset.image_stride,
             )
-            _, pose = self._odometry.register_frame(frame)
-            # TODO: handle this in another class?
+            processed_frame, pose = self._odometry.register_frame(frame)
             if idx % self._matching_frequency == 0:
-                self._compute_deformation_matches(rgb_img, depth_img, pose)
-            self._poses.append(pose)
+                srcs, dsts = self._compute_deformation_matches(rgb_img, depth_img, pose)
+                self._visualizer.update_matches(srcs, dsts)
             self._exec_times.append(time.perf_counter_ns() - start_time)
+            self._poses.append(pose)
+            self._visualizer.update(
+                pose,
+                pose @ self._dataset.get_extrinsics(),
+                rgb_img,
+                processed_frame,
+            )
 
     def _compute_deformation_matches(
         self, rgb_img: np.ndarray, depth_img: np.ndarray, pose: np.ndarray
@@ -149,6 +164,8 @@ class DeformRefPipeline:
         self._ref_matched_points = np.append(
             self._ref_matched_points, ref_points_3d, axis=0
         )
+
+        return points_3d, ref_points_3d
 
     def _visualize_matches(self):
         points, colors = self._ref_pcd.get_points_and_colors()

@@ -36,9 +36,11 @@ QUIT_BUTTON = "QUIT [Q]"
 # Colors
 BACKGROUND_COLOR = [0.8470, 0.8588, 0.8863]
 CAMERA_COLOR = [1.0, 0.0, 0.0]
+MATCHES_COLOR = [1.0, 0.0, 0.0]
 
 # Size constants
 CLOUD_POINT_SIZE = 0.004
+MATCHES_SIZE = 0.004
 POINTS_SIZE_STEP = 0.001
 POINTS_SIZE_MIN = 0.001
 POINTS_SIZE_MAX = 0.01
@@ -50,11 +52,14 @@ class StubVisualizer(ABC):
     def __init__(self):
         pass
 
-    def update(self, robot_pose, camera_pose, rgb_img, frame_pcd, map):
+    def update(self, robot_pose, camera_pose, rgb_img, frame_pcd, map=None):
+        pass
+
+    def update_matches(self, src: np.ndarray, dst: np.ndarray):
         pass
 
     def register_reference_map(self, ref_map):
-        pcd
+        pass
 
     def keep_running(self):
         pass
@@ -83,7 +88,7 @@ class MappingVisualizer(StubVisualizer):
         # Initialize visualizer
         self._initialize_visualizer()
 
-    def update(self, robot_pose, camera_pose, rgb_img, frame_pcd, map):
+    def update(self, robot_pose, camera_pose, rgb_img, frame_pcd, map=None):
         # Visualize image
         self._visualize_image(rgb_img)
 
@@ -92,10 +97,26 @@ class MappingVisualizer(StubVisualizer):
 
         # Visualize point clouds
         self._visualize_current_frame(frame_pcd, robot_pose)
-        self._visualize_map(map)
+        if map is not None:
+            self._visualize_map(map)
 
         # Visualization loop
         self._update_visualizer()
+
+    def update_matches(self, src: np.ndarray, dst: np.ndarray):
+        matches_nodes = np.zeros((src.shape[0] * 2, 3), dtype=np.float64)
+        matches_edges = np.zeros((src.shape[0], 2), dtype=np.int64)
+        for idx, (s, d) in enumerate(zip(src, dst)):
+            matches_nodes[idx * 2] = s
+            matches_nodes[(idx * 2) + 1] = d
+            matches_edges[idx] = np.array([idx * 2, (idx * 2) + 1])
+        matches_curve = ps.register_curve_network(
+            "matches",
+            matches_nodes,
+            matches_edges,
+            color=MATCHES_COLOR,
+        )
+        matches_curve.set_radius(MATCHES_SIZE, relative=False)
 
     def register_reference_map(self, ref_map):
         points, colors = ref_map.get_points_and_colors()
@@ -280,14 +301,16 @@ class MappingVisualizer(StubVisualizer):
         gui.TextUnformatted("Scene Options:")
         self._frame_points_size_callback()
         self._frame_transparency_callback()
-        self._map_points_size_callback()
-        self._map_transparency_callback()
+        if ps.has_point_cloud("map_pcd"):
+            self._map_points_size_callback()
+            self._map_transparency_callback()
         gui.Separator()
         self._quit_callback()
 
     def _keep_running_callback(self):
-        gui.TextUnformatted("Scene Options:")
-        self._map_points_size_callback()
-        self._map_transparency_callback()
-        gui.Separator()
+        if ps.has_point_cloud("map_pcd"):
+            gui.TextUnformatted("Scene Options:")
+            self._map_points_size_callback()
+            self._map_transparency_callback()
+            gui.Separator()
         self._quit_callback()
