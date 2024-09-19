@@ -53,6 +53,9 @@ class StubVisualizer(ABC):
     def update(self, robot_pose, camera_pose, rgb_img, frame_pcd, map):
         pass
 
+    def register_reference_map(self, ref_map):
+        pcd
+
     def keep_running(self):
         pass
 
@@ -93,6 +96,18 @@ class MappingVisualizer(StubVisualizer):
 
         # Visualization loop
         self._update_visualizer()
+
+    def register_reference_map(self, ref_map):
+        points, colors = ref_map.get_points_and_colors()
+        cloud = ps.register_point_cloud(
+            "ref_map_pcd",
+            points,
+            point_render_mode="quad",
+            transparency=self._map_transparency,
+        )
+        cloud.add_color_quantity("colors", colors, enabled=True)
+        cloud.set_radius(self._map_points_size, relative=False)
+        cloud.set_transparency(0.2)
 
     def keep_running(self):
         cv2.destroyAllWindows()
@@ -139,6 +154,7 @@ class MappingVisualizer(StubVisualizer):
         )
         cloud.add_color_quantity("colors", colors, enabled=True)
         cloud.set_radius(self._frame_points_size, relative=False)
+        cloud.set_transparency(self._frame_transparency)
         cloud.set_transform(pose)
 
     def _visualize_map(self, map):
@@ -151,6 +167,7 @@ class MappingVisualizer(StubVisualizer):
         )
         cloud.add_color_quantity("colors", colors, enabled=True)
         cloud.set_radius(self._map_points_size, relative=False)
+        cloud.set_transparency(self._map_transparency)
 
     def _update_visualizer(self):
         while self._block_execution:

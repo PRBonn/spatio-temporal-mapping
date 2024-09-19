@@ -64,6 +64,7 @@ class MappingOnRefPipeline:
             self._dataset.get_extrinsics(),
         )
         self._visualizer = MappingVisualizer() if visualize else StubVisualizer()
+        self._visualizer.register_reference_map(self._ref_pcd)
 
     def run(self):
         self._run_pipeline()
@@ -91,9 +92,11 @@ class MappingOnRefPipeline:
             self._exec_times.append(time.perf_counter_ns() - start_time)
             self._poses.append(pose)
             self._visualizer.update(
+                pose,
                 pose @ self._dataset.get_extrinsics(),
                 rgb_img,
-                self._odometry._local_map,
+                processed_frame,
+                self._global_map,
             )
 
     def _save_results(self):
