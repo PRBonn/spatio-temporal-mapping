@@ -24,6 +24,7 @@ from abc import ABC
 import polyscope as ps
 import polyscope.imgui as gui
 import cv2
+import copy
 
 import numpy as np
 
@@ -40,12 +41,15 @@ MATCHES_COLOR = [1.0, 0.0, 0.0]
 
 # Size constants
 CLOUD_POINT_SIZE = 0.004
-MATCHES_SIZE = 0.004
+MATCHES_SIZE = 0.001
 POINTS_SIZE_STEP = 0.001
 POINTS_SIZE_MIN = 0.001
 POINTS_SIZE_MAX = 0.01
 INSTANCES_CENTERS_SIZE = 0.01
 LINES_SIZE = 0.003
+
+# Other constants
+REF_TRANSLATION = 1.2
 
 
 class StubVisualizer(ABC):
@@ -55,10 +59,10 @@ class StubVisualizer(ABC):
     def update(self, robot_pose, camera_pose, rgb_img, frame_pcd, map=None):
         pass
 
-    def update_matches(self, src: np.ndarray, dst: np.ndarray):
+    def update_matches(self, src: np.ndarray, dst: np.ndarray, offset=False):
         pass
 
-    def register_reference_map(self, ref_map):
+    def register_reference_map(self, ref_map, offset=False):
         pass
 
     def keep_running(self):
@@ -103,10 +107,13 @@ class MappingVisualizer(StubVisualizer):
         # Visualization loop
         self._update_visualizer()
 
-    def update_matches(self, src: np.ndarray, dst: np.ndarray):
+    def update_matches(self, src: np.ndarray, dst: np.ndarray, offset=False):
         matches_nodes = np.zeros((src.shape[0] * 2, 3), dtype=np.float64)
         matches_edges = np.zeros((src.shape[0], 2), dtype=np.int64)
-        for idx, (s, d) in enumerate(zip(src, dst)):
+        dst_copy = copy.deepcopy(dst)
+        if offset:
+            dst_copy[:, 2] -= REF_TRANSLATION
+        for idx, (s, d) in enumerate(zip(src, dst_copy)):
             matches_nodes[idx * 2] = s
             matches_nodes[(idx * 2) + 1] = d
             matches_edges[idx] = np.array([idx * 2, (idx * 2) + 1])
@@ -118,8 +125,10 @@ class MappingVisualizer(StubVisualizer):
         )
         matches_curve.set_radius(MATCHES_SIZE, relative=False)
 
-    def register_reference_map(self, ref_map):
+    def register_reference_map(self, ref_map, offset=False):
         points, colors = ref_map.get_points_and_colors()
+        if offset:
+            points[:, 2] -= REF_TRANSLATION
         cloud = ps.register_point_cloud(
             "ref_map_pcd",
             points,
@@ -136,6 +145,8 @@ class MappingVisualizer(StubVisualizer):
         self._block_execution = True
         ps.get_camera_view("camera").set_enabled(False)
         ps.get_point_cloud("frame_pcd").set_enabled(False)
+        if ps.has_curve_network("matches"):
+            ps.get_curve_network("matches").set_enabled(False)
         ps.set_user_callback(self._keep_running_callback)
         ps.show()
 

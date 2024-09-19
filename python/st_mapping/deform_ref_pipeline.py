@@ -83,7 +83,7 @@ class DeformRefPipeline:
         self._matching_frequency = config.image_matcher.matching_frequency
 
         self._visualizer = MappingVisualizer() if visualize else StubVisualizer()
-        self._visualizer.register_reference_map(self._ref_pcd)
+        self._visualizer.register_reference_map(self._ref_pcd, offset=True)
 
     def run(self):
         self._run_pipeline()
@@ -111,14 +111,14 @@ class DeformRefPipeline:
             processed_frame, pose = self._odometry.register_frame(frame)
             if idx % self._matching_frequency == 0:
                 srcs, dsts = self._compute_deformation_matches(rgb_img, depth_img, pose)
-                self._visualizer.update_matches(srcs, dsts)
+                self._visualizer.update_matches(srcs, dsts, offset=True)
             self._exec_times.append(time.perf_counter_ns() - start_time)
             self._poses.append(pose)
             self._visualizer.update(
                 pose,
                 pose @ self._dataset.get_extrinsics(),
                 rgb_img,
-                processed_frame,
+                frame,
             )
 
     def _compute_deformation_matches(
