@@ -50,7 +50,7 @@ class StubVisualizer(ABC):
     def __init__(self):
         pass
 
-    def update(self, pose, rgb_img, frame_pcd):
+    def update(self, robot_pose, camera_pose, rgb_img, frame_pcd, map):
         pass
 
     def keep_running(self):
@@ -72,21 +72,24 @@ class MappingVisualizer(StubVisualizer):
         # Initilize GUI controls and attributes
         self._play_mode: bool = False
         self._block_execution: bool = True
-        self._points_size: float = CLOUD_POINT_SIZE
-        self._points_transparency: float = 1.0
+        self._frame_points_size: float = CLOUD_POINT_SIZE + POINTS_SIZE_STEP
+        self._map_points_size: float = CLOUD_POINT_SIZE - POINTS_SIZE_STEP
+        self._frame_transparency: float = 1.0
+        self._map_transparency: float = 0.9
 
         # Initialize visualizer
         self._initialize_visualizer()
 
-    def update(self, pose, rgb_img, frame_pcd):
+    def update(self, robot_pose, camera_pose, rgb_img, frame_pcd, map):
         # Visualize image
         self._visualize_image(rgb_img)
 
         # Visualize camera pose
-        self._update_camera_pose(pose)
+        self._update_camera_pose(camera_pose)
 
-        # Visualize frame point cloud
-        self._visualize_point_cloud(frame_pcd)
+        # Visualize point clouds
+        self._visualize_current_frame(frame_pcd, robot_pose)
+        self._visualize_map(map)
 
         # Visualization loop
         self._update_visualizer()
@@ -96,6 +99,7 @@ class MappingVisualizer(StubVisualizer):
         self._play_mode = False
         self._block_execution = True
         ps.get_camera_view("camera").set_enabled(False)
+        ps.get_point_cloud("frame_pcd").set_enabled(False)
         ps.set_user_callback(self._keep_running_callback)
         ps.show()
 
@@ -125,16 +129,28 @@ class MappingVisualizer(StubVisualizer):
         new_cam = ps.register_camera_view("camera", camera_params)
         new_cam.set_widget_color(CAMERA_COLOR)
 
-    def _visualize_point_cloud(self, frame_pcd):
+    def _visualize_current_frame(self, frame_pcd, pose):
         points, colors = frame_pcd.get_points_and_colors()
+        cloud = ps.register_point_cloud(
+            "frame_pcd",
+            points,
+            point_render_mode="quad",
+            transparency=self._frame_transparency,
+        )
+        cloud.add_color_quantity("colors", colors, enabled=True)
+        cloud.set_radius(self._frame_points_size, relative=False)
+        cloud.set_transform(pose)
+
+    def _visualize_map(self, map):
+        points, colors = map.get_points_and_colors()
         cloud = ps.register_point_cloud(
             "map_pcd",
             points,
             point_render_mode="quad",
-            transparency=self._points_transparency,
+            transparency=self._map_transparency,
         )
         cloud.add_color_quantity("colors", colors, enabled=True)
-        cloud.set_radius(self._points_size, relative=False)
+        cloud.set_radius(self._map_points_size, relative=False)
 
     def _update_visualizer(self):
         while self._block_execution:
@@ -153,36 +169,71 @@ class MappingVisualizer(StubVisualizer):
         if gui.Button(NEXT_FRAME_BUTTON) or gui.IsKeyPressed(gui.ImGuiKey_N):
             self._block_execution = not self._block_execution
 
-    def _points_size_callback(self):
+    def _frame_points_size_callback(self):
         key_changed = False
         if gui.IsKeyPressed(gui.ImGuiKey_Minus):
-            self._points_size = max(
-                POINTS_SIZE_MIN, self._points_size - POINTS_SIZE_STEP
+            self._frame_points_size = max(
+                POINTS_SIZE_MIN, self._frame_points_size - POINTS_SIZE_STEP
             )
             key_changed = True
         if gui.IsKeyPressed(gui.ImGuiKey_Equal):
-            self._points_size = min(
-                POINTS_SIZE_MAX, self._points_size + POINTS_SIZE_STEP
+            self._frame_points_size = min(
+                POINTS_SIZE_MAX, self._frame_points_size + POINTS_SIZE_STEP
             )
             key_changed = True
-        changed, self._points_size = gui.SliderFloat(
-            "Points Size",
-            self._points_size,
+        changed, self._frame_points_size = gui.SliderFloat(
+            "Frame points Size",
+            self._frame_points_size,
             v_min=POINTS_SIZE_MIN,
             v_max=POINTS_SIZE_MAX,
         )
         if changed or key_changed:
-            ps.get_point_cloud("map_pcd").set_radius(self._points_size, relative=False)
+            ps.get_point_cloud("frame_pcd").set_radius(
+                self._frame_points_size, relative=False
+            )
 
-    def _points_transparency_callback(self):
-        changed, self._points_transparency = gui.SliderFloat(
-            "Points Transparency",
-            self._points_transparency,
+    def _map_points_size_callback(self):
+        key_changed = False
+        if gui.IsKeyPressed(gui.ImGuiKey_Minus):
+            self._map_points_size = max(
+                POINTS_SIZE_MIN, self._map_points_size - POINTS_SIZE_STEP
+            )
+            key_changed = True
+        if gui.IsKeyPressed(gui.ImGuiKey_Equal):
+            self._map_points_size = min(
+                POINTS_SIZE_MAX, self._map_points_size + POINTS_SIZE_STEP
+            )
+            key_changed = True
+        changed, self._map_points_size = gui.SliderFloat(
+            "Map points Size",
+            self._map_points_size,
+            v_min=POINTS_SIZE_MIN,
+            v_max=POINTS_SIZE_MAX,
+        )
+        if changed or key_changed:
+            ps.get_point_cloud("map_pcd").set_radius(
+                self._map_points_size, relative=False
+            )
+
+    def _frame_transparency_callback(self):
+        changed, self._frame_transparency = gui.SliderFloat(
+            "Frame Transparency",
+            self._frame_transparency,
             v_min=0,
             v_max=1.0,
         )
         if changed:
-            ps.get_point_cloud("map_pcd").set_transparency(self._points_transparency)
+            ps.get_point_cloud("frame_pcd").set_transparency(self._frame_transparency)
+
+    def _map_transparency_callback(self):
+        changed, self._map_transparency = gui.SliderFloat(
+            "Map Transparency",
+            self._map_transparency,
+            v_min=0,
+            v_max=1.0,
+        )
+        if changed:
+            ps.get_point_cloud("map_pcd").set_transparency(self._map_transparency)
 
     def _quit_callback(self):
         posX = (
@@ -203,22 +254,23 @@ class MappingVisualizer(StubVisualizer):
             cv2.destroyAllWindows()
             os._exit(0)
 
-    def _scene_options_callback(self):
-        gui.TextUnformatted("Scene Options:")
-        self._points_size_callback()
-        self._points_transparency_callback()
-
     def _main_gui_callback(self):
         self._start_pause_callback()
         if not self._play_mode:
             gui.SameLine()
             self._next_frame_callback()
         gui.Separator()
-        self._scene_options_callback()
+        gui.TextUnformatted("Scene Options:")
+        self._frame_points_size_callback()
+        self._frame_transparency_callback()
+        self._map_points_size_callback()
+        self._map_transparency_callback()
         gui.Separator()
         self._quit_callback()
 
     def _keep_running_callback(self):
-        self._scene_options_callback()
+        gui.TextUnformatted("Scene Options:")
+        self._map_points_size_callback()
+        self._map_transparency_callback()
         gui.Separator()
         self._quit_callback()

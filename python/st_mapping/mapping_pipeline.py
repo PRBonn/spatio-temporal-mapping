@@ -92,9 +92,11 @@ class MappingPipeline:
             self._exec_times.append(time.perf_counter_ns() - start_time)
             self._poses.append(pose)
             self._visualizer.update(
+                pose,
                 pose @ self._dataset.get_extrinsics(),
                 rgb_img,
-                self._odometry._local_map,
+                processed_frame,
+                self._global_map,
             )
 
     def _save_results(self):

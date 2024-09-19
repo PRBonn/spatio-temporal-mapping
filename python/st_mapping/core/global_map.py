@@ -35,4 +35,5 @@ class GlobalMap:
         self._internal_global_map._integrate_point_cloud(pcd._internal_pcd, pose)
 
     def get_points_and_colors(self) -> Tuple[np.ndarray, np.ndarray]:
-        return self._internal_global_map._get_points_and_colors()
+        points, colors = self._internal_global_map._get_points_and_colors()
+        return np.asarray(points), np.asarray(colors)
