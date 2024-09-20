@@ -93,6 +93,7 @@ class DeformRefPipeline:
         self._run_evaluation()
         self._results.print()
         # TODO: add deformed map in the visualizer
+        self._visualizer.register_deformed_reference_map(self._deformed_ref_pcd)
         self._visualizer.keep_running()
         return
 

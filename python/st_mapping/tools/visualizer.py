@@ -65,6 +65,9 @@ class StubVisualizer(ABC):
     def register_reference_map(self, ref_map, offset=False):
         pass
 
+    def register_deformed_reference_map(self, deformed_ref_map):
+        pass
+
     def keep_running(self):
         pass
 
@@ -80,6 +83,7 @@ class MappingVisualizer(StubVisualizer):
 
         # Initilize attributes
         self._camera_poses = []
+        self._reference_offset = False
 
         # Initilize GUI controls and attributes
         self._play_mode: bool = False
@@ -143,6 +147,11 @@ class MappingVisualizer(StubVisualizer):
         cloud.add_color_quantity("colors", colors, enabled=True)
         cloud.set_radius(self._map_points_size, relative=False)
         cloud.set_transparency(0.2)
+
+    def register_deformed_reference_map(self, deformed_ref_map):
+        if ps.has_point_cloud("ref_map_pcd"):
+            ps.get_point_cloud("ref_map_pcd").translate([0, -REF_TRANSLATION, 0])
+        # TODO
 
     def keep_running(self):
         cv2.destroyAllWindows()
