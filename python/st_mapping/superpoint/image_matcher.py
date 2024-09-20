@@ -26,7 +26,7 @@ import numpy as np
 
 from st_mapping.config import StMappingConfig
 from st_mapping.superpoint.superpoint import SuperPointFrontend, match_keypoints
-from st_mapping.tools import visualize_visual_matches
+from st_mapping.tools import generate_visual_matches_image
 
 
 class ImageMatcher:
@@ -46,8 +46,11 @@ class ImageMatcher:
         self._homography_confidence_th = config.image_matcher.homography_confidence_th
 
     def match(
-        self, source_img: np.ndarray, ref_img: np.ndarray, visualize: bool = False
-    ) -> Tuple[np.ndarray, np.ndarray]:
+        self,
+        source_img: np.ndarray,
+        ref_img: np.ndarray,
+        generate_matched_image: bool = False,
+    ) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
         source_scale_factors = (
             source_img.shape[0] / float(self._imgs_size[0]),
             source_img.shape[1] / float(self._imgs_size[1]),
@@ -80,7 +83,10 @@ class ImageMatcher:
         pts1 = source_pts[:, zorro].T
         pts2 = ref_pts[:, zorro].T
 
-        if visualize:
-            visualize_visual_matches(source_img, ref_img, pts1, pts2)
+        matched_image = source_img
+        if generate_matched_image:
+            matched_image = generate_visual_matches_image(
+                source_img, ref_img, pts1, pts2
+            )
 
-        return pts1, pts2
+        return pts1, pts2, matched_image

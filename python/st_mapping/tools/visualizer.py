@@ -49,7 +49,7 @@ INSTANCES_CENTERS_SIZE = 0.01
 LINES_SIZE = 0.003
 
 # Other constants
-REF_TRANSLATION = 1.2
+REF_TRANSLATION = 0.9
 
 
 class StubVisualizer(ABC):
@@ -108,7 +108,6 @@ class MappingVisualizer(StubVisualizer):
         self._update_visualizer()
 
     def update_matches(self, src: np.ndarray, dst: np.ndarray, offset=False):
-        print(src.shape)
         if src.shape[0] == 0:
             if ps.has_curve_network("matches"):
                 ps.get_curve_network("matches").set_enabled(False)
@@ -117,7 +116,7 @@ class MappingVisualizer(StubVisualizer):
         matches_edges = np.zeros((src.shape[0], 2), dtype=np.int64)
         dst_copy = copy.deepcopy(dst)
         if offset:
-            dst_copy[:, 2] -= REF_TRANSLATION
+            dst_copy[:, 1] += REF_TRANSLATION
         for idx, (s, d) in enumerate(zip(src, dst_copy)):
             matches_nodes[idx * 2] = s
             matches_nodes[(idx * 2) + 1] = d
@@ -134,7 +133,7 @@ class MappingVisualizer(StubVisualizer):
     def register_reference_map(self, ref_map, offset=False):
         points, colors = ref_map.get_points_and_colors()
         if offset:
-            points[:, 2] -= REF_TRANSLATION
+            points[:, 1] += REF_TRANSLATION
         cloud = ps.register_point_cloud(
             "ref_map_pcd",
             points,

@@ -23,7 +23,7 @@ from .pretty_results import PrettyResults
 from .visualization_tools import (
     visualize_point_cloud,
     visualize_aligned_point_clouds,
-    visualize_visual_matches,
+    generate_visual_matches_image,
     visualize_3dmatches,
 )
 from .io_tools import (

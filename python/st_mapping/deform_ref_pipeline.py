@@ -82,6 +82,7 @@ class DeformRefPipeline:
         self._ref_matched_points = np.empty((0, 3), dtype=np.float64)
         self._matching_frequency = config.image_matcher.matching_frequency
 
+        self._visualize = visualize
         self._visualizer = MappingVisualizer() if visualize else StubVisualizer()
         self._visualizer.register_reference_map(self._ref_pcd, offset=True)
 
@@ -112,7 +113,9 @@ class DeformRefPipeline:
             srcs = np.array([])
             dsts = np.array([])
             if idx % self._matching_frequency == 0:
-                srcs, dsts = self._compute_deformation_matches(rgb_img, depth_img, pose)
+                srcs, dsts, rgb_img = self._compute_deformation_matches(
+                    rgb_img, depth_img, pose
+                )
             self._exec_times.append(time.perf_counter_ns() - start_time)
             self._poses.append(pose)
             self._visualizer.update_matches(srcs, dsts, offset=True)
@@ -130,8 +133,8 @@ class DeformRefPipeline:
         ref_rgb_img, ref_depth_img, ref_pose = (
             self._ref_dataset.get_nearest_image_and_pose(pose)
         )
-        points_2d, ref_points_2d = self._image_matcher.match(
-            rgb_img, ref_rgb_img, visualize=False
+        points_2d, ref_points_2d, matched_image = self._image_matcher.match(
+            rgb_img, ref_rgb_img, generate_matched_image=self._visualize
         )
 
         # Unproject matches
@@ -167,7 +170,7 @@ class DeformRefPipeline:
             self._ref_matched_points, ref_points_3d, axis=0
         )
 
-        return points_3d, ref_points_3d
+        return points_3d, ref_points_3d, matched_image
 
     def _visualize_matches(self):
         points, colors = self._ref_pcd.get_points_and_colors()

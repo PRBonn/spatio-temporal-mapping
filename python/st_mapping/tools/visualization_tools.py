@@ -43,7 +43,7 @@ def visualize_aligned_point_clouds(
     o3d.visualization.draw_geometries([pcd, ref_pcd])
 
 
-def visualize_visual_matches(
+def generate_visual_matches_image(
     img1: np.ndarray,
     img2: np.ndarray,
     pts1: np.ndarray,
@@ -89,9 +89,7 @@ def visualize_visual_matches(
         out = cv2.circle(out, coordinates_pt2, 2, (255, 0, 0), 2)
         out = cv2.line(out, coordinates_pt1, coordinates_pt2, (0, 255, 0), 1)
 
-    cv2.imshow("ciao", out)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
+    return out
 
 
 def visualize_3dmatches(
