@@ -109,11 +109,13 @@ class DeformRefPipeline:
                 self._config.dataset.image_stride,
             )
             processed_frame, pose = self._odometry.register_frame(frame)
+            srcs = np.array([])
+            dsts = np.array([])
             if idx % self._matching_frequency == 0:
                 srcs, dsts = self._compute_deformation_matches(rgb_img, depth_img, pose)
-                self._visualizer.update_matches(srcs, dsts, offset=True)
             self._exec_times.append(time.perf_counter_ns() - start_time)
             self._poses.append(pose)
+            self._visualizer.update_matches(srcs, dsts, offset=True)
             self._visualizer.update(
                 pose,
                 pose @ self._dataset.get_extrinsics(),

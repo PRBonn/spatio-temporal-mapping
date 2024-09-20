@@ -108,6 +108,11 @@ class MappingVisualizer(StubVisualizer):
         self._update_visualizer()
 
     def update_matches(self, src: np.ndarray, dst: np.ndarray, offset=False):
+        print(src.shape)
+        if src.shape[0] == 0:
+            if ps.has_curve_network("matches"):
+                ps.get_curve_network("matches").set_enabled(False)
+            return
         matches_nodes = np.zeros((src.shape[0] * 2, 3), dtype=np.float64)
         matches_edges = np.zeros((src.shape[0], 2), dtype=np.int64)
         dst_copy = copy.deepcopy(dst)
@@ -123,6 +128,7 @@ class MappingVisualizer(StubVisualizer):
             matches_edges,
             color=MATCHES_COLOR,
         )
+        matches_curve.set_enabled(True)
         matches_curve.set_radius(MATCHES_SIZE, relative=False)
 
     def register_reference_map(self, ref_map, offset=False):
