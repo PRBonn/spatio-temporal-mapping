@@ -1,5 +1,7 @@
 TODO.txt
 */libtorch/
+imgui.ini
+.polyscope.ini
 
 # Created by https://www.toptal.com/developers/gitignore/api/c++,python,cmake
 # Edit at https://www.toptal.com/developers/gitignore?templates=c++,python,cmake
