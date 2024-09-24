@@ -22,7 +22,9 @@ In order to be able to install the python package you need the essential softwar
 sudo apt-get install --no-install-recommends -y build-essential cmake pybind11-dev python3-dev python3-pip
 ```
 
-Then, all the dependencies will be handled by the system. If you want to have dependencies installed on your machine, you can run the following command on Ubuntu:
+Then, all the dependencies will be handled by the system, you just need to follow the instructions in the [next section](#installation).
+
+If you want to have dependencies installed on your machine, you can run the following command on Ubuntu:
 
 ```
 sudo apt-get install libeigen3-dev libopencv-dev libtbb-dev libceres-dev 
