@@ -142,7 +142,6 @@ class MappingVisualizer(StubVisualizer):
             "ref_map_pcd",
             points,
             point_render_mode="quad",
-            transparency=self._map_transparency,
         )
         cloud.add_color_quantity("colors", colors, enabled=True)
         cloud.set_radius(self._map_points_size, relative=False)
@@ -201,6 +200,10 @@ class MappingVisualizer(StubVisualizer):
         cloud.add_color_quantity("colors", colors, enabled=True)
         cloud.set_radius(self._frame_points_size, relative=False)
         cloud.set_transparency(self._frame_transparency)
+        if self._frame_transparency < 0.1:
+            cloud.set_enabled(False)
+        else:
+            cloud.set_enabled(True)
         cloud.set_transform(pose)
 
     def _visualize_map(self, map):
@@ -214,6 +217,10 @@ class MappingVisualizer(StubVisualizer):
         cloud.add_color_quantity("colors", colors, enabled=True)
         cloud.set_radius(self._map_points_size, relative=False)
         cloud.set_transparency(self._map_transparency)
+        if self._map_transparency < 0.1:
+            cloud.set_enabled(False)
+        else:
+            cloud.set_enabled(True)
 
     def _update_visualizer(self):
         while self._block_execution:
@@ -286,7 +293,12 @@ class MappingVisualizer(StubVisualizer):
             v_max=1.0,
         )
         if changed:
-            ps.get_point_cloud("frame_pcd").set_transparency(self._frame_transparency)
+            cloud = ps.get_point_cloud("frame_pcd")
+            cloud.set_transparency(self._frame_transparency)
+            if self._frame_transparency < 0.1:
+                cloud.set_enabled(False)
+            else:
+                cloud.set_enabled(True)
 
     def _map_transparency_callback(self):
         changed, self._map_transparency = gui.SliderFloat(
@@ -296,7 +308,12 @@ class MappingVisualizer(StubVisualizer):
             v_max=1.0,
         )
         if changed:
-            ps.get_point_cloud("map_pcd").set_transparency(self._map_transparency)
+            cloud = ps.get_point_cloud("map_pcd")
+            cloud.set_transparency(self._map_transparency)
+            if self._map_transparency < 0.1:
+                cloud.set_enabled(False)
+            else:
+                cloud.set_enabled(True)
 
     def _quit_callback(self):
         posX = (

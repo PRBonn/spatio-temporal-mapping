@@ -119,3 +119,29 @@ def visualize_3dmatches(
     lines.colors = o3d.utility.Vector3dVector(lines_colors)
 
     o3d.visualization.draw_geometries([pcd1, pcd2, pcd_map, lines])
+
+
+# TODO: integrate this functionality in the new visualizer
+def visualize_graph(nodes: np.ndarray, edges):
+    nodes_pcd = o3d.geometry.PointCloud(o3d.utility.Vector3dVector(nodes))
+    nodes_pcd.colors = o3d.utility.Vector3dVector(
+        [[1, 0, 0] for el in range(0, nodes.shape[0])]
+    )
+
+    lines_edges = np.empty((0, 2), dtype=np.int64)
+    for key in edges:
+        current_edges = np.asarray(
+            [[key, value] for value in edges[key] if value != -1]
+        )
+        if len(current_edges) > 0:
+            lines_edges = np.concatenate((lines_edges, current_edges), axis=0)
+    lines_colors = o3d.utility.Vector3dVector(
+        [[0, 0, 0] for el in range(0, lines_edges.shape[0])]
+    )
+    lines = o3d.geometry.LineSet(
+        points=o3d.utility.Vector3dVector(nodes),
+        lines=o3d.utility.Vector2iVector(lines_edges),
+    )
+    lines.colors = o3d.utility.Vector3dVector(lines_colors)
+
+    o3d.visualization.draw_geometries([nodes_pcd, lines])

@@ -2,12 +2,12 @@ n_frames: -1
 
 dataset:
   depth_scale: 1000 
-  image_stride: 8 
+  image_stride: 1 
   depth_min_th: 0.4
   depth_max_th: 1.0
 
 mapping:
-  max_points_per_voxel: 5 
+  max_points_per_voxel: 2
 
 alignment:
   stable_features_min_th: 0.0

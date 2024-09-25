@@ -43,7 +43,8 @@ class DeformationGraph:
         )
 
     def get_graph(self) -> Tuple[np.ndarray, Dict]:
-        return self._internal_deformation_graph._get_graph()
+        nodes, edges = self._internal_deformation_graph._get_graph()
+        return np.asarray(nodes), edges
 
     def add_measurements(self, points1: np.ndarray, points2: np.ndarray):
         self._internal_deformation_graph._add_measurements(
