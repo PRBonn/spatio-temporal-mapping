@@ -156,7 +156,7 @@ class MappingVisualizer(StubVisualizer):
         cv2.destroyAllWindows()
         self._play_mode = False
         self._block_execution = True
-        ps.get_camera_view("camera").set_enabled(False)
+        ps.get_curve_network("camera").set_enabled(False)
         ps.get_point_cloud("frame_pcd").set_enabled(False)
         if ps.has_curve_network("matches"):
             ps.get_curve_network("matches").set_enabled(False)
@@ -173,6 +173,25 @@ class MappingVisualizer(StubVisualizer):
         ps.set_user_callback(self._main_gui_callback)
         ps.set_build_default_gui_panels(False)
         cv2.namedWindow("Camera Stream")
+        self._initilize_camera()
+
+    def _initilize_camera(self):
+        nodes = (
+            np.asarray(
+                [[1.5, 1, 2], [-1.5, 1, 2], [-1.5, -1, 2], [1.5, -1, 2], [0, 0, 0]]
+            )
+            * 0.03
+        )
+        edges = np.asarray(
+            [[0, 1], [1, 2], [2, 3], [3, 0], [0, 4], [1, 4], [2, 4], [3, 4]]
+        )
+        camera = ps.register_curve_network(
+            "camera",
+            nodes,
+            edges,
+            color=CAMERA_COLOR,
+        )
+        camera.set_radius(0.002, relative=False)
 
     def _visualize_image(self, img):
         rgb_img = cv2.rotate(img, cv2.ROTATE_90_CLOCKWISE)
@@ -181,13 +200,7 @@ class MappingVisualizer(StubVisualizer):
         cv2.waitKey(1)
 
     def _update_camera_pose(self, pose):
-        self._camera_poses.append(pose)
-        camera_params = ps.CameraParameters(
-            ps.CameraIntrinsics(fov_vertical_deg=30, aspect=2),
-            ps.CameraExtrinsics(mat=np.linalg.inv(pose)),
-        )
-        new_cam = ps.register_camera_view("camera", camera_params)
-        new_cam.set_widget_color(CAMERA_COLOR)
+        ps.get_curve_network("camera").set_transform(pose)
 
     def _visualize_current_frame(self, frame_pcd, pose):
         points, colors = frame_pcd.get_points_and_colors()
