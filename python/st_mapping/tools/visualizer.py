@@ -175,6 +175,7 @@ class MappingVisualizer(StubVisualizer):
         cv2.namedWindow("Camera Stream")
         self._initilize_camera()
 
+    # TODO: make camera dimensions "relative"
     def _initilize_camera(self):
         nodes = (
             np.asarray(
