@@ -206,6 +206,11 @@ class DeformRefPipeline:
         poses_path = self._dataset.get_folder_path() / "poses.txt"
         save_kitti_poses(poses_path, np.array(self._poses))
         print("Poses saved at:", poses_path)
+        ref_points_path = self._dataset.get_folder_path() / "ref_points.npy"
+        np.save(ref_points_path, np.array(self._ref_matched_points))
+        query_points_path = self._dataset.get_folder_path() / "query_points.npy"
+        np.save(query_points_path, np.array(self._matched_points))
+        print("Matches saved at:", ref_points_path, "and", query_points_path)
         pcd_path = self._dataset.get_folder_path() / "deformed_map.ply"
         if self._deformed_ref_pcd is not None:
             points, colors = self._deformed_ref_pcd.get_points_and_colors()

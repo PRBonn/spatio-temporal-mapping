@@ -25,6 +25,7 @@ from .visualization_tools import (
     visualize_aligned_point_clouds,
     generate_visual_matches_image,
     visualize_3dmatches,
+    visualize_graph,
 )
 from .io_tools import (
     load_camera_parameters,

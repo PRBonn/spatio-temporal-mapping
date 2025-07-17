@@ -170,7 +170,7 @@ class GenericDataset:
             str(self._main_folder / "depth" / self._depth_filenames[idx]),
             cv2.IMREAD_UNCHANGED,
         )
-        depth_img = (depth_unprocessed / self._depth_scale).astype(np.float32)
+        depth_img = depth_unprocessed.astype(np.float32) / self._depth_scale
         return rgb_img, depth_img
 
     def img_width(self):
