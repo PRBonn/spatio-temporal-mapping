@@ -109,5 +109,5 @@ The code structure of this software follows the same of [KISS-ICP](https://githu
 
 
 ## Further Notes
-Please, check our [new work](https://github.com/PRBonn/spatio-temporal-mapping) that evolves this pipeline integrating spatio-temporal consistent instance segmentation of fruits. 
+Please, check our [new work](https://github.com/PRBonn/semantic-spatio-temporal-mapping) that evolves this pipeline integrating spatio-temporal consistent instance segmentation of fruits. 
 Do not forget to check the [new paper](https://www.ipb.uni-bonn.de/wp-content/papercite-data/pdf/lobefaro2025ral.pdf).
