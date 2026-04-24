@@ -82,12 +82,12 @@ def generate_visual_matches_image(
         out = cv2.circle(
             out,
             coordinates_pt1,
-            2,
-            (255, 0, 0),
+            4,
+            (0, 0, 255),
             2,
         )
-        out = cv2.circle(out, coordinates_pt2, 2, (255, 0, 0), 2)
-        out = cv2.line(out, coordinates_pt1, coordinates_pt2, (0, 255, 0), 1)
+        out = cv2.circle(out, coordinates_pt2, 4, (0, 0, 255), 2)
+        out = cv2.line(out, coordinates_pt1, coordinates_pt2, (0, 0, 255), 1)
 
     return out
 
