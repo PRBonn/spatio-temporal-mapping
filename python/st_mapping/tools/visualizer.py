@@ -144,7 +144,9 @@ class MappingVisualizer(StubVisualizer):
             point_render_mode="quad",
         )
         cloud.add_color_quantity("colors", colors, enabled=True)
-        cloud.set_radius(self._map_points_size, relative=False)
+        cloud.set_radius(
+            self._map_points_size - (POINTS_SIZE_STEP * 1.5), relative=False
+        )
         cloud.set_transparency(0.2)
 
     def register_deformed_reference_map(self, deformed_ref_map):
@@ -250,6 +252,7 @@ class MappingVisualizer(StubVisualizer):
             self._play_mode = not self._play_mode
 
     def _next_frame_callback(self):
+        cv2.waitKey(1)
         if gui.Button(NEXT_FRAME_BUTTON) or gui.IsKeyPressed(gui.ImGuiKey_N):
             self._block_execution = not self._block_execution
 

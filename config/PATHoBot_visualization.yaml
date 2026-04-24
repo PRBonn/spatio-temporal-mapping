@@ -7,7 +7,8 @@ dataset:
   depth_max_th: 1.0
 
 mapping:
-  max_points_per_voxel: 2
+  voxel_size: 0.005
+  max_points_per_voxel: 10
 
 alignment:
   stable_features_min_th: 0.0

@@ -106,3 +106,8 @@ The purpose of this software goes beyond the research done with the papers, we a
 
 ## Acknowledgement
 The code structure of this software follows the same of [KISS-ICP](https://github.com/PRBonn/kiss-icp) and some code is re-used from that repo. Please, if you use this software you should at least acknowledge also the work from KISS-ICP by giving a star on GitHub.
+
+
+## Further Notes
+Please, check our [new work](https://github.com/PRBonn/semantic-spatio-temporal-mapping) that evolves this pipeline integrating spatio-temporal consistent instance segmentation of fruits. 
+Do not forget to check the [new paper](https://www.ipb.uni-bonn.de/wp-content/papercite-data/pdf/lobefaro2025ral.pdf).
